@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "SDL.h"
+#include "texture.h"
 
 struct RelativeRect;
 
@@ -14,6 +15,10 @@ public:
     virtual ~MoveAlgorithm() {}
 
     virtual void move( SDL_Rect &CurPos ) = 0;
+    virtual void move( RelativeRect &CurPos )
+    {
+        CurPos = { 0, 0, 0, 0 };
+    }
 };
 
 typedef std::shared_ptr < MoveAlgorithm > pSharedMoveAlgo;

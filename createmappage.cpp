@@ -27,7 +27,7 @@ void CreateMapPage::changeState( State *state )
 
         if( ButtonState::RELEASED == m_ButtonVc[ static_cast <size_t> ( Button::BRICK_WALL ) ]->getState() )
         {
-            ImgTextureInitData InitData( "Images/BrickWall.png", { 85.5, 8,  6.5, 11.5 } );
+            ImgTextureInitData InitData( "media/images/BrickWall.png", { 85.5, 8,  6.5, 11.5 } );
             pMapUnit = std::make_shared < BuildMap > ( InitData, m_Renderer );
         }
     }

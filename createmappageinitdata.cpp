@@ -10,14 +10,14 @@ CreateMapPageInitData::CreateMapPageInitData( Renderer renderer ):
 
     m_ImgInitVc
     ({
-         { "Images/WoodPanel.png" }
+         { "media/images/WoodPanel.png" }
      }),
 
     m_ButtonInitVc
     ({
-         {{ "Images/wood_button.png",     { 89,   92, 6,   5    }}, { m_BaltExtB, "  Start  ",  m_Brown, m_Black, 150, 255, 1, 2 }},
-         {{ "Images/wood_button.png",     { 88,   85, 8,   5    }}, { m_BaltExtB, "Main Page",  m_Brown, m_Black, 150, 255, 1, 2 }},
-         {{ "Images/BrickWallButton.png", { 85.5, 8,  6.5, 11.5 }}, { m_BaltExtB, " ",          m_Brown, m_Black, 150, 255, 1, 2 }}
+         {{ "media/images/wood_button.png",     { 89,   92, 6,   5    }}, { m_BaltExtB, "  Start  ",  m_Brown, m_Black, 150, 255, 1, 2 }},
+         {{ "media/images/wood_button.png",     { 88,   85, 8,   5    }}, { m_BaltExtB, "Main Page",  m_Brown, m_Black, 150, 255, 1, 2 }},
+         {{ "media/images/BrickWallButton.png", { 85.5, 8,  6.5, 11.5 }}, { m_BaltExtB, " ",          m_Brown, m_Black, 150, 255, 1, 2 }}
      })
 
 {

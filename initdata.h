@@ -49,9 +49,9 @@ public:
         m_Red       ({ 255,   0,   0, 255 }),
         m_Black     ({   0,   0,   0, 255 }),
 
-        m_Arial    ( "arial.ttf",            70 ),
-        m_Calibrib ( "calibrib.ttf",         70 ),
-        m_BaltExtB ( "BalticaExtraBold.ttf", 70 ) {}
+        m_Arial    ( "media/fonts/arial.ttf",            70 ),
+        m_Calibrib ( "media/fonts/calibrib.ttf",         70 ),
+        m_BaltExtB ( "media/fonts/BalticaExtraBold.ttf", 70 ) {}
 
 
     virtual ~InitData() {}

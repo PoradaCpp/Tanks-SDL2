@@ -4,7 +4,6 @@
 #include <array>
 
 #include "dynamicobject.h"
-#include "texture.h"
 
 
 struct TankArrowInitData
@@ -30,14 +29,14 @@ enum class CurrentPosition
 class TankArrowMoveAlgo: public MoveAlgorithm
 {
 public:
-    TankArrowMoveAlgo( Texture texture, RelativeRect StartPos, RelativeRect AnotherPos, SDL_Scancode Key1 = SDL_SCANCODE_DOWN,
+    TankArrowMoveAlgo( RelativeRect StartPos, RelativeRect AnotherPos, SDL_Scancode Key1 = SDL_SCANCODE_DOWN,
                        SDL_Scancode Key2 = SDL_SCANCODE_UP );
     ~TankArrowMoveAlgo();
 
+    void move( RelativeRect &CurPos ) override;
     void move( SDL_Rect &CurPos ) override;
 
 private:
-    Texture m_Texture;
     RelativeRect m_StartPos;
     RelativeRect m_AnotherPos;
     std::array < SDL_Scancode, 2 > m_ScancodeArr;
@@ -57,7 +56,7 @@ public:
 
 private:
     Texture m_Texture;
-    SDL_Rect m_CurPos;
+    RelativeRect m_CurPos;
 };
 
 #endif // TANK_ARROW_H

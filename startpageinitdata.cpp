@@ -10,7 +10,7 @@ StartPageInitData::StartPageInitData( Renderer renderer ):
 
     m_ImgInitVc
     ({
-         { "Images/title_text.png", { 20,   15,   60,   35  }}
+         { "media/images/title_text.png", { 20,   15,   60,   35  }}
      }),
 
     m_Tex3DInitVc
@@ -39,11 +39,11 @@ StartPageInitData::StartPageInitData( Renderer renderer ):
 
     m_ButtonInitVc
     ({
-         {{ "Images/wood_button.png", { 88, 85, 8, 5 }}, { m_BaltExtB, "Create Map", m_Brown, m_Black, 150, 255, 1, 2 }},
-         {{ "Images/wood_button.png", { 89, 92, 6, 5 }}, { m_BaltExtB, "  Start  ",  m_Brown, m_Black, 150, 255, 1, 2 }}
+         {{ "media/images/wood_button.png", { 88, 85, 8, 5 }}, { m_BaltExtB, "Create Map", m_Brown, m_Black, 150, 255, 1, 2 }},
+         {{ "media/images/wood_button.png", { 89, 92, 6, 5 }}, { m_BaltExtB, "  Start  ",  m_Brown, m_Black, 150, 255, 1, 2 }}
      }),
 
-    m_TankArrowInitData( "Images/heavy_tank.png", { 27, 57, 15, 10  }, { 27, 67, 15, 10 }, { 27, 57, 36.8, 20 } )
+    m_TankArrowInitData( "media/images/heavy_tank.png", { 27, 57, 15, 10  }, { 27, 67, 15, 10 }, { 27, 57, 36.8, 20 } )
 {
     init();
 }

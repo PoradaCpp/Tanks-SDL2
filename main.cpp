@@ -18,7 +18,7 @@ int main()
     State MainState;
 
     {
-        MainWindow window( "BATTLE CITY", "Images/win_icon.png" );
+        MainWindow window( "BATTLE CITY", "media/images/win_icon.png" );
 
         StartPageInitData     startPageInitData( window.getRenderer() );
         CreateMapPageInitData createMapPageInitData( window.getRenderer() );
