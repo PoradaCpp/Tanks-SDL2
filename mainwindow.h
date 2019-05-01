@@ -26,7 +26,6 @@ public:
     void init( std::string sName, std::string sIconPath );
     void free();
     void windowClear();
-    void changeState( State *state );
     void renderContents( State *state );
     void windowUpdate();
     void windowProcessing( State *state );

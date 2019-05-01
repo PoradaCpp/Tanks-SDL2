@@ -7,7 +7,6 @@
 
 typedef std::shared_ptr < SDL_Renderer > pSharedSDLRenderer;
 
-class Texture;
 class MainWindow;
 
 class Renderer
@@ -15,10 +14,14 @@ class Renderer
 public:
     friend class MainWindow;
     friend class Texture;
+    friend class CreateMapPage;
+    friend class GamePage;
+    friend class MapObject;
+    friend class Map;
+    friend class BuildMap;
 
     Renderer();
     Renderer( MainWindow &pWindow );
-    Renderer( const Renderer &renderer );
     ~Renderer();
 
     Renderer& operator = ( const Renderer &renderer );

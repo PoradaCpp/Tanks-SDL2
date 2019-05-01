@@ -5,7 +5,7 @@
 
 #include "initdata.h"
 #include "renderer.h"
-#include "button.h"
+#include "buttonnamed.h"
 #include "tankarrow.h"
 
 class StartPageInitData: public InitData

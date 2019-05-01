@@ -7,7 +7,7 @@
 enum class CurrentState
 {
     START_PAGE  = 0,
-    CREATING_MAP = 1,
+    CREATE_MAP = 1,
     GAME  = 2,
 };
 

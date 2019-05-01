@@ -43,22 +43,24 @@ struct TextTextureInitData
     RelativeRect m_DestRect;
     RelativeRect m_BaseRect;
 
-    TextTextureInitData( Font font, std::string sText, SDL_Color TextColor, RelativeRect DestRect = { 0, 0, 0, 0 },
-                         RelativeRect BaseRect = { 0, 0, 0, 0 } ):
+    TextTextureInitData( Font font = Font(), std::string sText = std::string(), SDL_Color TextColor = { 0, 0, 0, 0 },
+                         RelativeRect DestRect = { 0, 0, 0, 0 }, RelativeRect BaseRect = { 0, 0, 0, 0 } ):
         m_TextSurfaceInitData( font, sText, TextColor ), m_DestRect( DestRect ), m_BaseRect( BaseRect ) {}
 };
 
 typedef std::shared_ptr < SDL_Texture > pSharedSDLTexture;
-typedef std::shared_ptr < Texture > pSharedTexture;
 
 class Texture: public DisplayedObject
 {
 public:
+    explicit Texture( Renderer renderer );
     Texture( ImgTextureInitData ImgInitData, Renderer renderer );
     Texture( TextTextureInitData TextInitData, Renderer renderer );
+
     ~Texture();
 
-    void attachRenderer( Renderer renderer );
+    Renderer getRenderer();
+    void shareInstantTexture( Texture texture );
     void makeTextureFromSurface( Surface &surface );
     void setBlendMode( SDL_BlendMode BlendMode = SDL_BLENDMODE_BLEND );
     void setAlpha( Uint8 Alpha );
@@ -68,6 +70,7 @@ public:
 
     SDL_Rect getDestination() const;
     SDL_Point getPosition() const;
+    RelativeRect getBase() const;
     void setDestination( SDL_Rect DestRect );
     void setPosition( int nX, int nY );
     void setRelativeDestination( RelativeRect RelativeDestRect, RelativeRect RelativeBaseRect = { 0, 0, 0, 0 } );
@@ -80,6 +83,8 @@ public:
     void render() override;
     void render( SDL_Rect* SourceRect, SDL_Rect* DestRect = nullptr, double dAngle = 0.0,
                         SDL_Point* Center = nullptr, SDL_RendererFlip Flip = SDL_FLIP_NONE );
+
+    operator bool ();
 
 private:
     pSharedSDLTexture m_pTexture;

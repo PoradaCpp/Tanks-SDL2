@@ -15,7 +15,7 @@ Surface::Surface( TextSurfaceInitData InitData ): m_pSurface( nullptr ), m_nHeig
     }
     else
     {
-        std::cerr << "Given Font is empty!" << '\n';
+        std::cerr << "Surface::Surface. Given Font is empty!" << '\n';
         std::exit(-1);
     }
 }

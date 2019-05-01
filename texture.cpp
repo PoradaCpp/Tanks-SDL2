@@ -3,9 +3,13 @@
 
 #include "texture.h"
 
+Texture::Texture( Renderer renderer ): DisplayedObject(), m_pTexture( nullptr ), m_Renderer( renderer ), m_nSrcHeight( 0 ),
+    m_nSrcWidth( 0 ), m_nPageHeight( 0 ), m_nPageWidth( 0 ), m_DestRect({ 0, 0, 0, 0 }), m_BaseRect({ 0, 0, 0, 0 }),
+    m_fBaseGiven( false ) {}
+
 Texture::Texture( ImgTextureInitData ImgInitData, Renderer renderer ): DisplayedObject(), m_pTexture( nullptr ),
-    m_Renderer( renderer ), m_RelativeDestRect( ImgInitData.m_DestRect ), m_DestRect( { 0, 0, 0, 0 } ),
-    m_RelativeBaseRect( ImgInitData.m_BaseRect ), m_BaseRect( { 0, 0, 0, 0 } )
+    m_Renderer( renderer ), m_RelativeDestRect( ImgInitData.m_DestRect ), m_DestRect({ 0, 0, 0, 0 }),
+    m_RelativeBaseRect( ImgInitData.m_BaseRect ), m_BaseRect({ 0, 0, 0, 0 })
 {
     m_fBaseGiven = m_RelativeBaseRect.relativeRectNotEmpty();
 
@@ -16,8 +20,8 @@ Texture::Texture( ImgTextureInitData ImgInitData, Renderer renderer ): Displayed
 }
 
 Texture::Texture( TextTextureInitData TextInitData, Renderer renderer): DisplayedObject(), m_pTexture( nullptr ),
-    m_Renderer( renderer ), m_RelativeDestRect( TextInitData.m_DestRect ), m_DestRect( { 0, 0, 0, 0 } ),
-    m_RelativeBaseRect( TextInitData.m_BaseRect ), m_BaseRect( { 0, 0, 0, 0 } )
+    m_Renderer( renderer ), m_RelativeDestRect( TextInitData.m_DestRect ), m_DestRect({ 0, 0, 0, 0 }),
+    m_RelativeBaseRect( TextInitData.m_BaseRect ), m_BaseRect({ 0, 0, 0, 0 })
 {
     m_fBaseGiven = m_RelativeBaseRect.relativeRectNotEmpty();
 
@@ -32,14 +36,19 @@ Texture::~Texture()
     free();
 }
 
-void Texture::attachRenderer( Renderer renderer )
+Renderer Texture::getRenderer()
 {
-    m_Renderer = renderer;
-
-    changeSize();
+    return m_Renderer;
 }
 
-pSharedSDLTexture Texture::makeTextureFromSurface(Surface &surface , Renderer &renderer ) const
+void Texture::shareInstantTexture( Texture texture )
+{
+    m_pTexture = texture.m_pTexture;
+    m_nSrcWidth = texture.getWidth();
+    m_nSrcHeight = texture.getHeight();
+}
+
+pSharedSDLTexture Texture::makeTextureFromSurface( Surface &surface , Renderer &renderer ) const
 {
     pSharedSDLTexture temp_pTexture( SDL_CreateTextureFromSurface( renderer, surface ),
                                   [] ( SDL_Texture *texture ) { SDL_DestroyTexture( texture ); });
@@ -127,6 +136,11 @@ SDL_Point Texture::getPosition() const
     return TempPoint;
 }
 
+RelativeRect Texture::getBase() const
+{
+    return m_RelativeBaseRect;
+}
+
 void Texture::setDestination( SDL_Rect DestRect )
 {
     m_DestRect = DestRect;
@@ -159,7 +173,11 @@ void Texture::setRelativePosition( double dX, double dY )
 
 void Texture::changeSize()
 {
-    SDL_GetRendererOutputSize( m_Renderer, &m_nPageWidth, &m_nPageHeight );
+    if( SDL_GetRendererOutputSize( m_Renderer, &m_nPageWidth, &m_nPageHeight ) < 0 )
+    {
+        std::cerr << "Cannot receive the window size! SDL Error: " << SDL_GetError() << '\n';
+        exit( -1 );
+    }
 
     RelativeRect RelativeDestRect = m_RelativeDestRect;
 
@@ -213,8 +231,12 @@ void Texture::render( SDL_Rect *SourceRect, SDL_Rect *DestRect, double dAngle, S
         DestRect = &m_DestRect;
     }
 
-
     SDL_RenderCopyEx( m_Renderer, m_pTexture.get(), SourceRect, DestRect, dAngle, Center, Flip );
+}
+
+Texture::operator bool ()
+{
+    return m_pTexture.operator bool();
 }
 
 void Texture::calcDestFromRelative(const RelativeRect &RelativeDestRect, SDL_Rect &DestRect )

@@ -37,9 +37,9 @@ void Text3D::setTopTextureShift( int dX, int dY )
     m_nTopTextureShiftY = dY;
 }
 
-void Text3D::setRelativeDestination( RelativeRect RelativeDestRect )
+void Text3D::setRelativeDestination(RelativeRect RelativeDestRect, RelativeRect RelativeBaseRect )
 {
-    m_BottomTexture.setRelativeDestination( RelativeDestRect );
+    m_BottomTexture.setRelativeDestination( RelativeDestRect, RelativeBaseRect );
 
     SDL_Rect DestRect = m_BottomTexture.getDestination();
     DestRect.x += m_nTopTextureShiftX;

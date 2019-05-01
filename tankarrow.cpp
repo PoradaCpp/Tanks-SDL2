@@ -12,7 +12,7 @@ void TankArrowMoveAlgo::move( RelativeRect &CurPos )
 
     if( CurrentPosition::START == m_CurPos )
     {
-        if( currentKeyStates[ m_ScancodeArr[0] ] )
+        if( currentKeyStates[ m_ScancodeArr.at(0) ] )
         {
             CurPos = m_AnotherPos;
             m_CurPos = CurrentPosition::ANOTHER;
@@ -20,7 +20,7 @@ void TankArrowMoveAlgo::move( RelativeRect &CurPos )
     }
     else
     {
-        if( currentKeyStates[ m_ScancodeArr[1] ] )
+        if( currentKeyStates[ m_ScancodeArr.at(1) ] )
         {
             CurPos = m_StartPos;
             m_CurPos = CurrentPosition::START;

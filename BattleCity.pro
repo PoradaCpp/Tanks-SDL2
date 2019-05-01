@@ -5,9 +5,7 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     mainwindow.cpp \
-    texture.cpp \
     surface.cpp \
-    button.cpp \
     startpage.cpp \
     text3d.cpp \
     tankarrow.cpp \
@@ -17,7 +15,14 @@ SOURCES += main.cpp \
     startpageinitdata.cpp \
     createmappageinitdata.cpp \
     createmappage.cpp \
-    buildmap.cpp
+    buildmap.cpp \
+    mapobject.cpp \
+    map.cpp \
+    texture.cpp \
+    buttonnamed.cpp \
+    button.cpp \
+    gamepageinitdata.cpp \
+    gamepage.cpp
 
 # Command
 # -L[Directory path of "lib" folder] -lSDL2
@@ -36,9 +41,7 @@ INCLUDEPATH += C://Users//Workstation//Documents//CPP//mingw_dev_lib//SDL2_mixer
 
 HEADERS += \
     mainwindow.h \
-    texture.h \
     surface.h \
-    button.h \
     page.h \
     startpage.h \
     text3d.h \
@@ -53,4 +56,11 @@ HEADERS += \
     initdata.h \
     createmappageinitdata.h \
     createmappage.h \
-    buildmap.h
+    buildmap.h \
+    mapobject.h \
+    map.h \
+    texture.h \
+    buttonnamed.h \
+    button.h \
+    gamepageinitdata.h \
+    gamepage.h

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <array>
+#include <functional>
 
 #include "text3d.h"
 #include "displayedobject.h"
@@ -14,15 +15,9 @@ struct ButtonInitData
 
     ButtonInitData( ImgTextureInitData ImgInitData, Text3DInitData TextInitData ):
         m_ImgInitData( ImgInitData ), m_Text3DInitData( TextInitData ) {}
-};
 
-struct ButtonDestinationData
-{
-    RelativeRect m_RelativeDestRect;
-    RelativeRect m_RelativeBaseRect;
-
-    ButtonDestinationData( RelativeRect DestRect, RelativeRect BaseRect = { 0, 0, 0, 0} ):
-        m_RelativeDestRect( DestRect ), m_RelativeBaseRect( BaseRect ) {}
+    ButtonInitData( ImgTextureInitData ImgInitData ):
+        m_ImgInitData( ImgInitData ) {}
 };
 
 enum class ButtonState
@@ -36,28 +31,33 @@ enum class ButtonState
 class Button: public DisplayedObject
 {
 public:
+    typedef std::function <void()> Action;
+
     Button( ButtonInitData InitData, Renderer renderer );
-    Button( Texture ImageTexture, Text3D ButtonName, RelativeRect DestRect, RelativeRect BaseRect = { 0, 0, 0, 0} );
-    Button( Texture ImageTexture, Text3D ButtonName, ButtonDestinationData InitData );
+    Button( ImgTextureInitData InitData, Renderer renderer );
     ~Button();
 
-    ButtonState getState();
-    Uint32 inFocus(int &nCursorX, int &nCursorY);
+    virtual Uint32 inFocus();
+    virtual ButtonState getState();
+
+    virtual void setAction( Action action );
+    virtual void execute();
+
     void changeSize() override;
     void render() override;
 
-private:
-    RelativeRect m_RelativeDestRect;
-    SDL_Rect m_DestImgRect;
-    RelativeRect m_RelativeDestTxtRect;
+protected:
     Texture m_ImageTexture;
-    Text3D m_NameText3D;
+    SDL_Rect m_DestImgRect;
     ButtonState m_State;
-    std::array < SDL_Rect, 3 > m_RectArr;
+    std::array < SDL_Rect, 3 > m_SourceRectArr;
+    SDL_Point m_CursorPos;
+
+    Action m_Action;
 
     void setRenderDimensions();
 };
 
-typedef std::shared_ptr < Button > pSharedButton;
+typedef std::shared_ptr <Button> pSharedButton;
 
 #endif // BUTTON_H

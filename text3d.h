@@ -20,6 +20,8 @@ struct Text3DInitData
         BottomTextInitData( font, sText, BottomTextColor, DestRect, BaseRect ),
         m_nTopTextureAlpha( nTopTextureAlpha ), m_nBottomTextureAlpha( nBottomTextureAlpha ),
         m_nTopTextureShiftX( nTopTextureShiftX ), m_nTopTextureShiftY( nTopTextureShiftY ) {}
+
+    Text3DInitData() {}
 };
 
 
@@ -34,7 +36,7 @@ public:
     void setBottomTextureAlpha( Uint8 Alpha );
     void setTopTextureShift( int dX, int dY );
 
-    void setRelativeDestination( RelativeRect RelativeDestRect );
+    void setRelativeDestination( RelativeRect RelativeDestRect, RelativeRect RelativeBaseRect = { 0, 0, 0, 0 } );
 
     void changeSize() override;
     void render() override;

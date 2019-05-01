@@ -92,14 +92,6 @@ void MainWindow::windowClear()
     SDL_RenderClear( m_Renderer );
 }
 
-void MainWindow::changeState( State *state )
-{
-    if( m_PageVector.size() > static_cast <size_t> ( state->getState() ) )
-    {
-        m_PageVector[ static_cast <size_t> ( state->getState() ) ]->changeState( state );
-    }
-}
-
 void MainWindow::renderContents( State *state )
 {
     int nHeight(0), nWidth(0);
@@ -118,10 +110,10 @@ void MainWindow::renderContents( State *state )
     {
         if( fSizeChanged )
         {
-            m_PageVector[ static_cast <size_t> ( state->getState() ) ]->resize();
+            m_PageVector.at( static_cast <size_t> ( state->getState() ) )->resize();
         }
 
-        m_PageVector[ static_cast <size_t> ( state->getState() ) ]->render();
+        m_PageVector.at( static_cast <size_t> ( state->getState() ) )->render();
     }
 }
 
@@ -133,7 +125,6 @@ void MainWindow::windowUpdate()
 void MainWindow::windowProcessing( State *state )
 {
     windowClear();
-    changeState( state );
     renderContents( state );
     windowUpdate();
 }

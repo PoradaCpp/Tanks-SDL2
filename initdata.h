@@ -6,32 +6,37 @@
 #include <vector>
 
 #include "dynamicobject.h"
-#include "button.h"
+#include "buttonnamed.h"
+#include "map.h"
 
 struct InitContainers
 {
     InitContainers() {}
     InitContainers( std::vector < pSharedDisplayedObj > DisplayedObjVc, std::vector < pSharedButton > ButtonVc,
-                    std::vector < pSharedDynObj > DynObjVc ):
+                    std::vector < pSharedDynObj > DynObjVc, pSharedMap pMap ):
         m_DisplayedObjVc( DisplayedObjVc ),
         m_ButtonVc      ( ButtonVc       ),
-        m_DynObjVc      ( DynObjVc       ) {}
+        m_DynObjVc      ( DynObjVc       ),
+        m_pMap          ( pMap            ) {}
 
     InitContainers( const InitContainers &rObj ):
         m_DisplayedObjVc( rObj.m_DisplayedObjVc ),
         m_ButtonVc      ( rObj.m_ButtonVc       ),
-        m_DynObjVc      ( rObj.m_DynObjVc       ) {}
+        m_DynObjVc      ( rObj.m_DynObjVc       ),
+        m_pMap          ( rObj.m_pMap           ) {}
 
     InitContainers( const InitContainers &&rObj ):
         m_DisplayedObjVc( std::move( rObj.m_DisplayedObjVc )),
         m_ButtonVc      ( std::move( rObj.m_ButtonVc       )),
-        m_DynObjVc      ( std::move( rObj.m_DynObjVc       )) {}
+        m_DynObjVc      ( std::move( rObj.m_DynObjVc       )),
+        m_pMap          ( std::move( rObj.m_pMap           )) {}
 
     ~InitContainers() {}
 
     std::vector < pSharedDisplayedObj > m_DisplayedObjVc;
     std::vector < pSharedButton >       m_ButtonVc;
     std::vector < pSharedDynObj >       m_DynObjVc;
+    pSharedMap m_pMap;
 };
 
 class InitData

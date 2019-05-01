@@ -23,8 +23,6 @@ Renderer::Renderer( MainWindow &pWindow ): m_pRenderer( nullptr )
     }
 }
 
-Renderer::Renderer( const Renderer &renderer ): m_pRenderer( renderer.m_pRenderer ) {}
-
 Renderer::~Renderer() {}
 
 Renderer& Renderer::operator = ( const Renderer &renderer )
