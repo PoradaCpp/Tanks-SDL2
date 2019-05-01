@@ -22,6 +22,7 @@ public:
 
     Renderer();
     Renderer( MainWindow &pWindow );
+    Renderer( const Renderer &renderer );
     ~Renderer();
 
     Renderer& operator = ( const Renderer &renderer );

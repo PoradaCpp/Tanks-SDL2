@@ -15,7 +15,8 @@ class MainWindow
 public:
     friend class Renderer;
 
-    MainWindow( std::string sName = "Main Window", std::string sIconPath = "" );
+    MainWindow();
+    MainWindow( std::string sName, std::string sIconPath );
     MainWindow( const MainWindow &window );
     ~MainWindow();
 

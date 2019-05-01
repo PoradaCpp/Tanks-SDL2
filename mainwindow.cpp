@@ -7,6 +7,8 @@
 #include "state.h"
 #include "surface.h"
 
+MainWindow::MainWindow(): m_pWindow( nullptr ), m_nWidth( 0 ), m_nHeight( 0 ) {}
+
 MainWindow::MainWindow( std::string sName, std::string sIconPath ): m_pWindow( nullptr ), m_nWidth( 0 ), m_nHeight( 0 )
 {
     init( sName, sIconPath );
