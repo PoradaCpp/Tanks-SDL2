@@ -5,6 +5,7 @@
 #include <array>
 
 #include "texture.h"
+#include "tankproperties.h"
 
 class MapCollisionInfo
 {
@@ -52,7 +53,8 @@ public:
     void renderTexture( SDL_Rect SourceRect );
     void renderFillRect();
     bool checkCollision( const SDL_Rect &CheckingRect );
-    void destroy( const SDL_Rect &DestroyingRect );
+    bool checkCollisionWithLine( SDL_Point Point1, SDL_Point Point2 );
+    void destroy( SDL_Rect DestroyingRect, CommonTanksProperties::MoveDirection moveDirection );
 
     static const size_t TILE_DEFAULT_NUMBER = 99;
 
@@ -74,6 +76,7 @@ private:
     void calcTileRealSize();
     void fillTileAtomsArr();
     bool SDL_RectContains( SDL_Rect &MoreLargeRect, SDL_Rect &MoreSmallRect );
+    void destroyingRectAlignment( SDL_Rect &DestroyingRect, CommonTanksProperties::MoveDirection moveDirection );
 };
 
 typedef std::shared_ptr < MapObject > pSharedMapObject;

@@ -129,6 +129,65 @@ bool MapObject::SDL_RectContains( SDL_Rect &MoreLargeRect, SDL_Rect &MoreSmallRe
              ( ( MoreLargeRect.y + MoreLargeRect.h ) >= ( MoreSmallRect.y + MoreSmallRect.h ) ) );
 }
 
+void MapObject::destroyingRectAlignment( SDL_Rect &DestroyingRect, CommonTanksProperties::MoveDirection moveDirection )
+{
+    SDL_Point Point1, Point2, CheckPoint;
+    int nLenght = DestroyingRect.w < DestroyingRect.h ? DestroyingRect.w : DestroyingRect.h;
+    nLenght = lround( nLenght * 1.2 );
+
+    switch( moveDirection )
+    {
+    case CommonTanksProperties::MoveDirection::UP:
+        Point1 = { DestroyingRect.x, DestroyingRect.y + DestroyingRect.h };
+        Point2 = { DestroyingRect.x + DestroyingRect.w, DestroyingRect.y + DestroyingRect.h };
+        break;
+
+    case CommonTanksProperties::MoveDirection::DOWN:
+        Point1 = { DestroyingRect.x, DestroyingRect.y };
+        Point2 = { DestroyingRect.x + DestroyingRect.w, DestroyingRect.y };
+        break;
+
+    case CommonTanksProperties::MoveDirection::RIGHT:
+        Point1 = { DestroyingRect.x + DestroyingRect.w, DestroyingRect.y };
+        Point2 = { DestroyingRect.x + DestroyingRect.w, DestroyingRect.y + DestroyingRect.h };
+        break;
+
+    case CommonTanksProperties::MoveDirection::LEFT:
+        Point1 = { DestroyingRect.x, DestroyingRect.y };
+        Point2 = { DestroyingRect.x, DestroyingRect.y + DestroyingRect.h };
+        break;
+    }
+    CheckPoint = Point1;
+
+    for( int i = 0; i < nLenght && !checkCollisionWithLine( Point1, Point2 ); ++i )
+    {
+        switch( moveDirection )
+        {
+        case CommonTanksProperties::MoveDirection::UP:
+            --Point1.y;
+            --Point2.y;
+            break;
+
+        case CommonTanksProperties::MoveDirection::DOWN:
+            ++Point1.y;
+            ++Point2.y;
+            break;
+
+        case CommonTanksProperties::MoveDirection::RIGHT:
+            --Point1.x;
+            --Point2.x;
+            break;
+
+        case CommonTanksProperties::MoveDirection::LEFT:
+            ++Point1.x;
+            ++Point2.x;
+            break;
+        }
+    }
+    DestroyingRect.x += Point1.x - CheckPoint.x;
+    DestroyingRect.y += Point1.y - CheckPoint.y;
+}
+
 size_t MapObject::getTileNumber() const
 {
     return m_nTileNumber;
@@ -210,12 +269,26 @@ bool MapObject::checkCollision( const SDL_Rect &CheckingRect )
             return true;
         }
     }
-
     return false;
 }
 
-void MapObject::destroy( const SDL_Rect &DestroyingRect )
+bool MapObject::checkCollisionWithLine( SDL_Point Point1, SDL_Point Point2 )
 {
+    for( size_t i = 0, nVcSize = m_TileAtomsVc.size(); i < nVcSize; ++i )
+    {
+        if( m_TileAtomsVc.at( i ).first &&
+            SDL_IntersectRectAndLine( &m_TileAtomsVc.at( i ).second, &Point1.x, &Point1.y, &Point2.x, &Point2.y ) )
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void MapObject::destroy( SDL_Rect DestroyingRect, CommonTanksProperties::MoveDirection moveDirection )
+{
+    destroyingRectAlignment( DestroyingRect, moveDirection );
+
     for( size_t i = 0, nVcSize = m_TileAtomsVc.size(); i < nVcSize; ++i )
     {
         if( m_TileAtomsVc.at( i ).first && SDL_HasIntersection( &m_TileAtomsVc.at( i ).second, &DestroyingRect ) )

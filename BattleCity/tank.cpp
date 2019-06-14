@@ -11,12 +11,12 @@
 /// \brief Object with data about real or "solid" part of TAnk
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Tank::Tank( Animation TankMoveAnim, Animation TankExplosionAnim, Animation ShellExplosionAnim, pSharedMap pMap,
-            RelativeRect RelativeBirthPos, GameEngine *pGameEngine, MoveDirection moveDirection ): DisplayedObject(),
-    m_TankMoveAnim( TankMoveAnim ), m_TankExplosionAnim( TankExplosionAnim ), m_ShellExplosionAnim( ShellExplosionAnim ),
-    m_pProperties( nullptr), m_pMap( pMap), m_AnimCurPos({ 0, 0, 0, 0 }), m_pRealCurPos( nullptr ),
-    m_RealSizeRectHoriz({ 0, 0, 0, 0 }), m_RealSizeRectVert({ 0, 0, 0, 0 }), m_TankCenter({ 0, 0 }), m_ShellPosition({ 0, 0 }),
-    m_nAnimBegin( 0 ), m_nAnimEnd( 0 ), m_MoveDirection( moveDirection ), m_fMove( false ), m_fBirth( true ), m_fDestroyed( false ),
-    m_nDestroyingTime( 0 ), m_pGameEngine( pGameEngine )
+            RelativeRect RelativeBirthPos, GameEngine *pGameEngine, CommonTanksProperties::MoveDirection moveDirection ):
+    DisplayedObject(), m_TankMoveAnim( TankMoveAnim ), m_TankExplosionAnim( TankExplosionAnim ),
+    m_ShellExplosionAnim( ShellExplosionAnim ), m_pProperties( nullptr), m_pMap( pMap), m_AnimCurPos({ 0, 0, 0, 0 }),
+    m_pRealCurPos( nullptr ), m_RealSizeRectHoriz({ 0, 0, 0, 0 }), m_RealSizeRectVert({ 0, 0, 0, 0 }), m_TankCenter({ 0, 0 }),
+    m_ShellPosition({ 0, 0 }), m_nAnimBegin( 0 ), m_nAnimEnd( 0 ), m_MoveDirection( moveDirection ), m_fMove( false ),
+    m_fBirth( true ), m_fDestroyed( false ), m_nDestroyingTime( 0 ), m_pGameEngine( pGameEngine )
 {
     m_TankMoveAnim.setRelativeDestination( RelativeBirthPos );
     m_AnimCurPos = m_TankMoveAnim.getDestination();
@@ -36,7 +36,7 @@ void Tank::countRealTankSize()
     m_RealSizeRectVert.x = m_RealSizeRectHoriz.x + ( m_RealSizeRectHoriz.w - m_RealSizeRectVert.w ) / 2;
     m_RealSizeRectVert.y = m_RealSizeRectHoriz.y + ( m_RealSizeRectHoriz.h - m_RealSizeRectVert.h ) / 2;
 
-    if( MoveDirection::UP == m_MoveDirection || MoveDirection::DOWN == m_MoveDirection )
+    if( CommonTanksProperties::MoveDirection::UP == m_MoveDirection || CommonTanksProperties::MoveDirection::DOWN == m_MoveDirection )
     {
         m_pRealCurPos = &m_RealSizeRectVert;
     }
@@ -48,27 +48,27 @@ void Tank::countRealTankSize()
     m_TankCenter.y = m_pRealCurPos->y + m_pRealCurPos->h / 2;
 }
 
-Tank::MoveDirection Tank::determineDirection( SDL_Rect &NewPos )
+CommonTanksProperties::MoveDirection Tank::determineDirection( SDL_Rect &NewPos )
 {
-    MoveDirection NewDirection( m_MoveDirection );
+    CommonTanksProperties::MoveDirection NewDirection( m_MoveDirection );
 
     if( NewPos.x != m_pRealCurPos->x || NewPos.y != m_pRealCurPos->y )
     {
         if(m_pRealCurPos->x > NewPos.x )
         {
-            NewDirection = MoveDirection::RIGHT;
+            NewDirection = CommonTanksProperties::MoveDirection::RIGHT;
         }
         else if( m_pRealCurPos->x < NewPos.x )
         {
-            NewDirection = MoveDirection::LEFT;
+            NewDirection = CommonTanksProperties::MoveDirection::LEFT;
         }
         else if( m_pRealCurPos->y > NewPos.y )
         {
-            NewDirection = MoveDirection::UP;;
+            NewDirection = CommonTanksProperties::MoveDirection::UP;;
         }
         else if( m_pRealCurPos->y < NewPos.y )
         {
-            NewDirection = MoveDirection::DOWN;
+            NewDirection = CommonTanksProperties::MoveDirection::DOWN;
         }
     }
     return NewDirection;
@@ -76,7 +76,8 @@ Tank::MoveDirection Tank::determineDirection( SDL_Rect &NewPos )
 
 void Tank::allowNewPosition( SDL_Rect &NewPos )
 {
-    if( MoveDirection::RIGHT == m_MoveDirection || MoveDirection::LEFT == m_MoveDirection )
+    if( CommonTanksProperties::MoveDirection::RIGHT == m_MoveDirection ||
+        CommonTanksProperties::MoveDirection::LEFT == m_MoveDirection )
     {
         int nDx = NewPos.x - m_RealSizeRectHoriz.x;
         int nDy = NewPos.y - m_RealSizeRectHoriz.y;
@@ -102,11 +103,12 @@ void Tank::allowNewPosition( SDL_Rect &NewPos )
     m_TankCenter.y = m_pRealCurPos->y + m_pRealCurPos->h / 2;
 }
 
-SDL_Rect Tank::calcPossiblePos( SDL_Rect &NewPos, MoveDirection NewDirection )
+SDL_Rect Tank::calcPossiblePos( SDL_Rect &NewPos, CommonTanksProperties::MoveDirection NewDirection )
 {
     SDL_Rect PossiblePos;
 
-    if( MoveDirection::RIGHT == NewDirection || MoveDirection::LEFT == NewDirection )
+    if( CommonTanksProperties::MoveDirection::RIGHT == NewDirection ||
+        CommonTanksProperties::MoveDirection::LEFT == NewDirection )
     {
         int nDx = NewPos.x - m_pRealCurPos->x;
         PossiblePos = m_RealSizeRectHoriz;
@@ -235,7 +237,7 @@ bool Tank::checkNewPosition( SDL_Rect &NewPos )
     bool fLooseMove = false;
     m_TankMoveAnim.startAnimation( m_nAnimBegin, m_nAnimEnd );
 
-    MoveDirection NewDirection = determineDirection( NewPos );
+    CommonTanksProperties::MoveDirection NewDirection = determineDirection( NewPos );
     SDL_Rect PossiblePos = calcPossiblePos( NewPos, NewDirection );
 
     if( NewDirection != m_MoveDirection )
@@ -296,24 +298,24 @@ void Tank::calcShellPosition()
 
     switch( m_MoveDirection )
     {
-    case MoveDirection::UP:
+    case CommonTanksProperties::MoveDirection::UP:
         m_ShellPosition.y -= m_AnimCurPos.h * ( CommonTanksProperties::TANK_SHELL_SCALE -
                                                 m_pProperties->m_RelativeTankShellPos.m_dX ) / 100;
         m_ShellPosition.x -= m_AnimCurPos.w * ( m_pProperties->m_RelativeTankShellPos.m_dY ) / 100;
         break;
 
-    case MoveDirection::DOWN:
+    case CommonTanksProperties::MoveDirection::DOWN:
         m_ShellPosition.y -= m_AnimCurPos.h * m_pProperties->m_RelativeTankShellPos.m_dX / 100;
         m_ShellPosition.x -= m_AnimCurPos.w * ( m_pProperties->m_RelativeTankShellPos.m_dY ) / 100;
         break;
 
-    case MoveDirection::RIGHT:
+    case CommonTanksProperties::MoveDirection::RIGHT:
         m_ShellPosition.y -= m_AnimCurPos.h * ( m_pProperties->m_RelativeTankShellPos.m_dY ) / 100;
         m_ShellPosition.x -= m_AnimCurPos.w * ( CommonTanksProperties::TANK_SHELL_SCALE -
                                                 m_pProperties->m_RelativeTankShellPos.m_dX ) / 100;
         break;
 
-    case MoveDirection::LEFT:
+    case CommonTanksProperties::MoveDirection::LEFT:
         m_ShellPosition.y -= m_AnimCurPos.h * ( m_pProperties->m_RelativeTankShellPos.m_dY ) / 100;
         m_ShellPosition.x -= m_AnimCurPos.w * m_pProperties->m_RelativeTankShellPos.m_dX / 100;
 

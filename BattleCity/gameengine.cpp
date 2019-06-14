@@ -14,7 +14,7 @@ const RelativeRect GameEngine::ENEMY2_BIRTH_POS  = { 27, 2.5, 5.7, 10 };
 const RelativeRect GameEngine::ENEMY3_BIRTH_POS  = { 51, 2.5, 5.7, 10 };
 const RelativeRect GameEngine::ENEMY4_BIRTH_POS  = { 76, 2.5, 5.7, 10 };
 
-std::vector <SDL_Rect> vc1, vc2;
+//std::vector <SDL_Rect> vc1, vc2;
 
 const std::array <const RelativeRect*, 4> GameEngine::ENEMY_BIRTH_PLACE_ARR{ &ENEMY1_BIRTH_POS, &ENEMY2_BIRTH_POS,
                                                                              &ENEMY3_BIRTH_POS, &ENEMY4_BIRTH_POS };
@@ -168,17 +168,17 @@ void GameEngine::livesAndEnemies()
         }
     }
 
-    SDL_SetRenderDrawColor( m_Renderer, 0, 0, 255, 255 );
+    /*SDL_SetRenderDrawColor( m_Renderer, 0, 0, 255, 255 );
     std::for_each( vc1.begin(), vc1.end(), [this] ( SDL_Rect &rect )
     {
-        SDL_RenderFillRect( m_Renderer, &rect );
+        SDL_RenderDrawRect( m_Renderer, &rect );
     });
 
     SDL_SetRenderDrawColor( m_Renderer, 255, 0, 0, 255 );
     std::for_each( vc2.begin(), vc2.end(), [this] ( SDL_Rect &rect )
     {
         SDL_RenderFillRect( m_Renderer, &rect );
-    });
+    });*/
 }
 
 void GameEngine::attachGlobalGameState( State *pGlobalGameState )
@@ -262,21 +262,21 @@ void GameEngine::gameAction()
 
             if( pBirthPlace )
             {
-                Tank::MoveDirection moveDirection = Tank::MoveDirection::UP;
+                CommonTanksProperties::MoveDirection moveDirection = CommonTanksProperties::MoveDirection::UP;
 
                 switch( m_Rand1_4() )
                 {
                 case 1:
-                    moveDirection = Tank::MoveDirection::UP;
+                    moveDirection = CommonTanksProperties::MoveDirection::UP;
                     break;
                 case 2:
-                    moveDirection = Tank::MoveDirection::DOWN;
+                    moveDirection = CommonTanksProperties::MoveDirection::DOWN;
                     break;
                 case 3:
-                    moveDirection = Tank::MoveDirection::LEFT;
+                    moveDirection = CommonTanksProperties::MoveDirection::LEFT;
                     break;
                 case 4:
-                    moveDirection = Tank::MoveDirection::RIGHT;
+                    moveDirection = CommonTanksProperties::MoveDirection::RIGHT;
                     break;
                 }
 
@@ -345,11 +345,11 @@ void GameEngine::gameAction()
 
                 if( !m_pMap->checkBorderCollision( pShell->getCollisionPosition() ))
                 {
-                    m_pMap->destroy( pShell->getDestoyingVolume() );
-                    std::cout << "x: " << pShell->getDestoyingVolume().x << ", y: " << pShell->getDestoyingVolume().y
-                              << ", w: " << pShell->getDestoyingVolume().w << ", h: " << pShell->getDestoyingVolume().h << '\n';
-                    vc1.push_back( pShell->getDestoyingVolume() );
-                    vc2.push_back( pShell->getCollisionPosition() );
+                    m_pMap->destroy( pShell->getCollisionPosition(), pShell->getDestoyingVolume(), pShell->getMoveDirection() );
+                    //std::cout << "x: " << pShell->getDestoyingVolume().x << ", y: " << pShell->getDestoyingVolume().y
+                    //          << ", w: " << pShell->getDestoyingVolume().w << ", h: " << pShell->getDestoyingVolume().h << '\n';
+                    //vc1.push_back( pShell->getDestoyingVolume() );
+                    //vc2.push_back( pShell->getCollisionPosition() );
                 }
             }
 

@@ -1,6 +1,6 @@
 #include "tankshell.h"
 
-TankShell::TankShell(Animation ShellExplosionAnim, RelativeRect RelativePos, Tank::MoveDirection moveDirection,
+TankShell::TankShell(Animation ShellExplosionAnim, RelativeRect RelativePos, CommonTanksProperties::MoveDirection moveDirection,
                       CommonTanksProperties::TankOwnerIdentity tankOwnerIdentity, double dRelativeXDestroyingForce ):
     m_ShellAnim( ShellExplosionAnim ), m_CurPos({ 0, 0, 0, 0 }), m_CollisionSize({ 0, 0, 0, 0 }),
     m_HorizShellDestroyingVolume({ 0, 0, 0, 0 }), m_VertShellDestroyingVolume({ 0, 0, 0, 0 }),
@@ -81,28 +81,28 @@ void TankShell::changePosition()
     {
         switch( m_MoveDirection )
         {
-        case Tank::MoveDirection::UP:
+        case CommonTanksProperties::MoveDirection::UP:
             m_CurPos.y        -= m_nTankShellSpeed;
             m_CollisionSize.y -= m_nTankShellSpeed;
             m_HorizShellDestroyingVolume.x = m_CurPos.x + ( m_CurPos.w - m_HorizShellDestroyingVolume.w ) / 2;
             m_HorizShellDestroyingVolume.y = m_CurPos.y + ( m_CurPos.h - m_HorizShellDestroyingVolume.h ) / 2;
             break;
 
-        case Tank::MoveDirection::DOWN:
+        case CommonTanksProperties::MoveDirection::DOWN:
             m_CurPos.y        += m_nTankShellSpeed;
             m_CollisionSize.y += m_nTankShellSpeed;
             m_HorizShellDestroyingVolume.x = m_CurPos.x + ( m_CurPos.w - m_HorizShellDestroyingVolume.w ) / 2;
             m_HorizShellDestroyingVolume.y = m_CurPos.y + ( m_CurPos.h - m_HorizShellDestroyingVolume.h ) / 2;
             break;
 
-        case Tank::MoveDirection::RIGHT:
+        case CommonTanksProperties::MoveDirection::RIGHT:
             m_CurPos.x        -= m_nTankShellSpeed;
             m_CollisionSize.x -= m_nTankShellSpeed;
             m_VertShellDestroyingVolume.x = m_CurPos.x + ( m_CurPos.w - m_VertShellDestroyingVolume.w ) / 2;
             m_VertShellDestroyingVolume.y = m_CurPos.y + ( m_CurPos.h - m_VertShellDestroyingVolume.h ) / 2;
             break;
 
-        case Tank::MoveDirection::LEFT:
+        case CommonTanksProperties::MoveDirection::LEFT:
             m_CurPos.x        += m_nTankShellSpeed;
             m_CollisionSize.x += m_nTankShellSpeed;
             m_VertShellDestroyingVolume.x = m_CurPos.x + ( m_CurPos.w - m_VertShellDestroyingVolume.w ) / 2;
@@ -135,7 +135,7 @@ SDL_Rect TankShell::getCollisionPosition() const
 
 SDL_Rect TankShell::getDestoyingVolume() const
 {
-    if( Tank::MoveDirection::UP == m_MoveDirection || Tank::MoveDirection::DOWN == m_MoveDirection )
+    if( CommonTanksProperties::MoveDirection::UP == m_MoveDirection || CommonTanksProperties::MoveDirection::DOWN == m_MoveDirection )
     {
         return m_HorizShellDestroyingVolume;
     }
@@ -148,4 +148,9 @@ SDL_Rect TankShell::getDestoyingVolume() const
 CommonTanksProperties::TankOwnerIdentity TankShell::getOwnerIdentity() const
 {
     return m_TankOwnerIdentity;
+}
+
+CommonTanksProperties::MoveDirection TankShell::getMoveDirection() const
+{
+    return m_MoveDirection;
 }

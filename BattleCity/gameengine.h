@@ -27,7 +27,7 @@ public:
 
     static const size_t   MAX_ACTIVE_TANKS_NUMBER        = 8;
     static const uint32_t MAX_NUM_OF_ENEMIES             = 20;
-    static const uint32_t NUM_OF_ENEMIES_ON_MAP_1PLAYER  = 0;
+    static const uint32_t NUM_OF_ENEMIES_ON_MAP_1PLAYER  = 4;
     static const uint32_t NUM_OF_ENEMIES_ON_MAP_2PLAYERS = 6;
     static const uint32_t START_PLAYERS_LIVES            = 5;
     static const uint32_t FIRST_BONUS_TANK_NUMBER        = 4;

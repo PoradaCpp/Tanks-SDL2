@@ -4,7 +4,7 @@
 #include "tankshell.h"
 
 TankOfPlayer::TankOfPlayer(Animation TankMoveAnim, Animation TankExplosionAnim, Animation BombExplosionAnim, pSharedMap pMap,
-                            RelativeRect RelativeBirthPos, GameEngine *pGameEngine, MoveDirection moveDirection ):
+                            RelativeRect RelativeBirthPos, GameEngine *pGameEngine, CommonTanksProperties::MoveDirection moveDirection ):
     Tank( TankMoveAnim, TankExplosionAnim, BombExplosionAnim, pMap, RelativeBirthPos, pGameEngine, moveDirection ),
     m_TankDefenseAnim( TankMoveAnim ), m_DefenseRelativeRect( 0, 0, 0, 0 ), m_nDefenseTime( 0 ), m_fDefense( true ) {}
 

@@ -7,7 +7,8 @@ class TankOfPlayer: public Tank
 {
 public:
     TankOfPlayer( Animation TankMoveAnim, Animation TankExplosionAnim, Animation BombExplosionAnim, pSharedMap pMap,
-                  RelativeRect RelativeBirthPos, GameEngine *pGameEngine, MoveDirection moveDirection = MoveDirection::UP );
+                  RelativeRect RelativeBirthPos, GameEngine *pGameEngine,
+                  CommonTanksProperties::MoveDirection moveDirection = CommonTanksProperties::MoveDirection::UP );
     ~TankOfPlayer() override;
 
     void changeSize() override;

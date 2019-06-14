@@ -8,7 +8,7 @@
 class TankShell
 {
 public:
-    TankShell( Animation ShellExplosionAnim, RelativeRect RelativePos, Tank::MoveDirection moveDirection,
+    TankShell( Animation ShellExplosionAnim, RelativeRect RelativePos, CommonTanksProperties::MoveDirection moveDirection,
                CommonTanksProperties::TankOwnerIdentity tankOwnerIdentity, double dRelativeXDestroyingForce );
     ~TankShell();
 
@@ -24,6 +24,7 @@ public:
     SDL_Rect getCollisionPosition() const;
     SDL_Rect getDestoyingVolume() const;
     CommonTanksProperties::TankOwnerIdentity getOwnerIdentity() const;
+    CommonTanksProperties::MoveDirection getMoveDirection() const;
 
 private:
     Animation m_ShellAnim;
@@ -32,7 +33,7 @@ private:
     SDL_Rect m_HorizShellDestroyingVolume;
     SDL_Rect m_VertShellDestroyingVolume;
     double m_dRelativeXDestroyingForce;
-    Tank::MoveDirection m_MoveDirection;
+    CommonTanksProperties::MoveDirection m_MoveDirection;
     CommonTanksProperties::TankOwnerIdentity m_TankOwnerIdentity;
     uint32_t m_nTankShellSpeed;
     bool m_fExplosion;

@@ -18,16 +18,9 @@ class Tank: public DisplayedObject
 public:
     friend class GameEngine;
 
-    enum class MoveDirection
-    {
-        UP    =   90,
-        DOWN  =  -90,
-        LEFT  =   180,
-        RIGHT =   0
-    };
-
     Tank( Animation TankMoveAnim, Animation TankExplosionAnim, Animation ShellExplosionAnim, pSharedMap pMap,
-          RelativeRect RelativeBirthPos, GameEngine *pGameEngine, MoveDirection moveDirection = MoveDirection::UP );
+          RelativeRect RelativeBirthPos, GameEngine *pGameEngine,
+          CommonTanksProperties::MoveDirection moveDirection = CommonTanksProperties::MoveDirection::UP );
     ~Tank() override;
 
     void changeSize() override;
@@ -57,7 +50,7 @@ protected:
     SDL_Point m_ShellPosition;
     uint32_t m_nAnimBegin;
     uint32_t m_nAnimEnd;
-    MoveDirection m_MoveDirection;
+    CommonTanksProperties::MoveDirection m_MoveDirection;
     bool m_fMove;
     bool m_fBirth;
     bool m_fDestroyed;
@@ -66,9 +59,9 @@ protected:
     GameEngine *m_pGameEngine;
 
     void countRealTankSize();
-    MoveDirection determineDirection( SDL_Rect &NewPos );
+    CommonTanksProperties::MoveDirection determineDirection( SDL_Rect &NewPos );
     void allowNewPosition( SDL_Rect &NewPos );
-    SDL_Rect calcPossiblePos( SDL_Rect &NewPos, MoveDirection NewDirection );
+    SDL_Rect calcPossiblePos( SDL_Rect &NewPos, CommonTanksProperties::MoveDirection NewDirection );
     bool alignmentAfterTurn( SDL_Rect &PossiblePos );
     bool alignmentAfterResize( SDL_Rect &PossiblePos );
     bool checkTankCollision();

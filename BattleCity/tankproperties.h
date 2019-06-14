@@ -30,6 +30,14 @@ namespace CommonTanksProperties
         HEAVY_TANK         = 4
     };
 
+    enum class MoveDirection
+    {
+        UP    =   90,
+        DOWN  =  -90,
+        LEFT  =   180,
+        RIGHT =   0
+    };
+
     const double TANK_SHELL_SCALE = 30;
     const double TANK_SHELL_SHIFT = 45;
     const double BTR_SHELL_SHIFT  = 10;

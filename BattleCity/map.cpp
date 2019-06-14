@@ -353,17 +353,26 @@ bool Map::checkBorderCollision( const SDL_Rect &CheckingRect )
     return false;
 }
 
-void Map::destroy( const SDL_Rect &DestroyingRect )
+void Map::destroy( const SDL_Rect &CheckingRect, const SDL_Rect &DestroyingRect, CommonTanksProperties::MoveDirection moveDirection )
 {
-    size_t nTileUpperBegin = tileNumberForPoint( DestroyingRect.x, DestroyingRect.y );
-    size_t nTileUpperEnd   = tileNumberForPoint( DestroyingRect.x + DestroyingRect.w, DestroyingRect.y );
-    size_t nTileDownBegin  = tileNumberForPoint( DestroyingRect.x + DestroyingRect.w, DestroyingRect.y + DestroyingRect.h );
+    size_t nTileUpperBegin = tileNumberForPoint( DestroyingRect.x - 5, DestroyingRect.y - 5 );
+    size_t nTileUpperEnd   = tileNumberForPoint( DestroyingRect.x + DestroyingRect.w + 5, DestroyingRect.y - 5 );
+    size_t nTileDownBegin  = tileNumberForPoint( DestroyingRect.x + DestroyingRect.w + 5, DestroyingRect.y + DestroyingRect.h + 5 );
+
+    SDL_Rect CheckRect;
+    CheckRect.w = CheckingRect.w > DestroyingRect.w ? CheckingRect.w : DestroyingRect.w;
+    CheckRect.h = CheckingRect.h > DestroyingRect.h ? CheckingRect.h : DestroyingRect.h;
+    CheckRect.x = CheckingRect.x + ( CheckingRect.w - CheckRect.w ) / 2;
+    CheckRect.y = CheckingRect.y + ( CheckingRect.h - CheckRect.h ) / 2;
 
     for( size_t i = nTileUpperBegin; i <= nTileDownBegin; i += ROW_SIZE )
     {
         for( size_t j = 0, nRowNum = nTileUpperEnd - nTileUpperBegin; j <= nRowNum; ++j )
         {
-            m_MapVc.at( i + j )->destroy( DestroyingRect );
+            if( m_MapVc.at( i + j )->checkCollision( CheckRect ) )
+            {
+                m_MapVc.at( i + j )->destroy( DestroyingRect, moveDirection );
+            }
         }
     }
 }

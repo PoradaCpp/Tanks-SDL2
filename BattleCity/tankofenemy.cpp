@@ -4,7 +4,7 @@
 #include "tankshell.h"
 
 TankOfEnemy::TankOfEnemy(Animation TankMoveAnim, Animation TankExplosionAnim, Animation BombExplosionAnim, pSharedMap pMap,
-                            RelativeRect RelativeBirthPos, GameEngine *pGameEngine, MoveDirection moveDirection ):
+                            RelativeRect RelativeBirthPos, GameEngine *pGameEngine, CommonTanksProperties::MoveDirection moveDirection ):
     Tank( TankMoveAnim, TankExplosionAnim, BombExplosionAnim, pMap, RelativeBirthPos, pGameEngine, moveDirection ),
     m_nDeadLockChangeDirectionTime( 0 ) {}
 

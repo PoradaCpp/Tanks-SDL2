@@ -5,6 +5,7 @@
 
 #include "mapobject.h"
 #include "displayedobject.h"
+#include "tankproperties.h"
 
 struct MapInitData
 {
@@ -41,7 +42,7 @@ public:
     int getPageWidth() const;
     bool checkCollision( const SDL_Rect &CheckingRect );
     bool checkBorderCollision( const SDL_Rect &CheckingRect );
-    void destroy( const SDL_Rect &DestroyingRect );
+    void destroy( const SDL_Rect &CheckingRect, const SDL_Rect &DestroyingRect, CommonTanksProperties::MoveDirection moveDirection );
 
     static const size_t MAP_SIZE    = 504;
     static const size_t ROW_SIZE    = 28;
