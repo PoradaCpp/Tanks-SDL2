@@ -21,9 +21,9 @@ void GamePage::initButtons( State *pState )
 {
     if( static_cast <size_t> ( Buttons::BUTTONS_QUANTITY ) == m_ButtonVc.size() )
     {
-        m_ButtonVc.at( static_cast <size_t> ( Buttons::SET_START_PAGE_STATE ))->setAction( [] ()
+        m_ButtonVc.at( static_cast <size_t> ( Buttons::SET_PAUSE ))->setAction( [this] ()
         {
-            std::cout << "Asking for pause() function\n";
+            m_pGameEngine->setStartOrPause();
         });
 
         m_ButtonVc.at( static_cast <size_t> ( Buttons::SET_CREATE_MAP_STATE ))->setAction( [pState, this] ()

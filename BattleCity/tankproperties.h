@@ -91,9 +91,9 @@ namespace CommonTanksProperties
     const uint32_t ENEMY_BONUS_HEAVY_TANK_ANIM_END      = 99;
 
     const double PLAYERS_TANK_X_DESTROYING_FORCE        = 0.8;
-    const double ENEMY_TANK_X_DESTROYING_FORCE          = 0.75;
+    const double ENEMY_TANK_X_DESTROYING_FORCE          = 0.7;
     const double PLAYERS_HEAVY_TANK_X_DESTROYING_FORCE  = 1.6;
-    const double ENEMY_HEAVY_TANK_X_DESTROYING_FORCE    = 1.5;
+    const double ENEMY_HEAVY_TANK_X_DESTROYING_FORCE    = 1.4;
 
     const uint32_t SHELL_ANIM_BEGIN                     = 3;
     const int      SHELL_SIZE_SCALE                     = 50;

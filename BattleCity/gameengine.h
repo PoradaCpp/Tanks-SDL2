@@ -26,15 +26,7 @@ public:
     void gameAction();
     void resize();
     void render();
-
-    static const size_t   MAX_ACTIVE_TANKS_NUMBER        = 8;
-    static const uint32_t MAX_NUM_OF_ENEMIES             = 20;
-    static const uint32_t NUM_OF_ENEMIES_ON_MAP_1PLAYER  = 4;
-    static const uint32_t NUM_OF_ENEMIES_ON_MAP_2PLAYERS = 6;
-    static const uint32_t START_PLAYERS_LIVES            = 5;
-    static const uint32_t FIRST_BONUS_TANK_NUMBER        = 4;
-    static const uint32_t SECOND_BONUS_TANK_NUMBER       = 11;
-    static const uint32_t THIRD_BONUS_TANK_NUMBER        = 18;
+    void setStartOrPause();
 
 private:
     enum class AnimPurpose
@@ -68,9 +60,16 @@ private:
     static constexpr double LIVES_X_COLUMNS_SHIFT = 4;
     static constexpr double LIVES_Y_ROWS_SHIFT    = 4.9;
 
-    static const size_t LIVES_COLUMNS_NUMBER = 3;
-    static const size_t ENEMIES_ROWS_NUMBER  = 7;
-    static const size_t PLAYERS_ROWS_NUMBER  = 2;
+    static const uint32_t MAX_NUM_OF_ENEMIES             = 20;
+    static const uint32_t NUM_OF_ENEMIES_ON_MAP_1PLAYER  = 4;
+    static const uint32_t NUM_OF_ENEMIES_ON_MAP_2PLAYERS = 6;
+    static const uint32_t START_PLAYERS_LIVES            = 5;
+    static const uint32_t FIRST_BONUS_TANK_NUMBER        = 4;
+    static const uint32_t SECOND_BONUS_TANK_NUMBER       = 11;
+    static const uint32_t THIRD_BONUS_TANK_NUMBER        = 18;
+    static const size_t   LIVES_COLUMNS_NUMBER           = 3;
+    static const size_t   ENEMIES_ROWS_NUMBER            = 7;
+    static const size_t   PLAYERS_ROWS_NUMBER            = 2;
 
     std::vector <SDL_Rect> m_EnemyBirthPlaceVc;
 
@@ -82,6 +81,8 @@ private:
     std::vector <SDL_Rect>  m_EnemyImagesPlaceVc;
     std::vector <SDL_Rect>  m_Player1ImagesPlaceVc;
     std::vector <SDL_Rect>  m_Player2ImagesPlaceVc;
+    SDL_Rect m_Player1BirthPlace;
+    SDL_Rect m_Player2BirthPlace;
     Renderer m_Renderer;
     pSharedMap m_pMap;
     NumOfPlayers m_NumOfPlayers;
@@ -99,6 +100,11 @@ private:
     void calcLiveRectSize();
     void calcLiveRectSize( std::vector <SDL_Rect> &nImagePlaceVc, TexturePurpose texturePurpose );
     void livesAndEnemies();
+    void calcBirthPlacesRectSize();
+    void playersBirth( const CommonTanksProperties::TankOwnerIdentity &tankOwner, const uint32_t &nCurrentLives, bool &fPlayerAlive );
+    void enemiesBirth();
+    void tanksManagement();
+    void tankShellsManagement();
 };
 
 typedef std::shared_ptr <GameEngine> pSharedGameEngine;

@@ -65,6 +65,19 @@ private:
     static const size_t TILE_ATOMS_IN_DIMENSION = 8;
     static const MapCollisionInfo COLLISION_INFO;
 
+    enum class TileType
+    {
+        BRICK           = 0,
+        GRANITE         = 1,
+        FOREST          = 10,
+        WATER           = 11,
+        ICE             = 12,
+        HEART           = 16,
+        EMPTY           = 99,
+        WHITE_SQUARE    = 19,
+        SOLID_WALLS_END = 9
+    };
+
     Texture m_Texture;
     Renderer m_Renderer;
     std::vector <std::pair <bool, SDL_Rect>> m_TileAtomsVc;
@@ -72,7 +85,9 @@ private:
     SDL_Rect m_TileRealPart;
     SDL_Rect m_TileRect;
     size_t m_nTileNumber;
+    TileType m_TileType;
 
+    void determineTileType();
     void calcTileRealSize();
     void fillTileAtomsArr();
     bool SDL_RectContains( SDL_Rect &MoreLargeRect, SDL_Rect &MoreSmallRect );

@@ -29,7 +29,7 @@ void TankShell::recalcPosition()
 void TankShell::calcDestroyingVolume()
 {
     m_HorizShellDestroyingVolume.w = lround( m_CurPos.w * 100.0 / CommonTanksProperties::TANK_SHELL_SCALE );
-    m_HorizShellDestroyingVolume.h = lround( m_ShellAnim.getPageHeight() * m_dRelativeXDestroyingForce / 100 );
+    m_HorizShellDestroyingVolume.h = lround( m_ShellAnim.getPageWidth() * m_dRelativeXDestroyingForce / 100 );
 
     m_VertShellDestroyingVolume.w = lround( m_ShellAnim.getPageWidth() * m_dRelativeXDestroyingForce / 100 );
     m_VertShellDestroyingVolume.h = lround( m_CurPos.h * 100.0 / CommonTanksProperties::TANK_SHELL_SCALE );

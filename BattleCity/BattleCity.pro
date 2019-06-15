@@ -39,8 +39,6 @@ LIBS += -LC://Users//Workstation//Documents//CPP//mingw_dev_lib//SDL2_image-2.0.
 LIBS += -LC://Users//Workstation//Documents//CPP//mingw_dev_lib//SDL2_ttf-2.0.14//i686-w64-mingw32//lib -lSDL2_ttf
 LIBS += -LC://Users//Workstation//Documents//CPP//mingw_dev_lib//SDL2_mixer-2.0.4//i686-w64-mingw32//lib -lSDL2_mixer
 
-
-
 # [Directory of "include"]
 INCLUDEPATH += C://Users//Workstation//Documents//CPP//mingw_dev_lib//SDL2-2.0.9//i686-w64-mingw32//include//SDL2
 INCLUDEPATH += C://Users//Workstation//Documents//CPP//mingw_dev_lib//SDL2_image-2.0.4//i686-w64-mingw32//include//SDL2

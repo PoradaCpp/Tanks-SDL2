@@ -48,10 +48,39 @@ MapObject::MapObject( Texture texture, Renderer renderer ): m_Texture( texture )
 {
     m_Texture.setRelativeDestination( DEFAULT_TILE_SIZE, TILES_BASE_RECT );
     m_TileRect = m_Texture.getDestination();
+    determineTileType();
     fillTileAtomsArr();
 }
 
 MapObject::~MapObject() {}
+
+void MapObject::determineTileType()
+{
+    if( ( m_nTileNumber < static_cast <uint32_t> ( TileType::SOLID_WALLS_END ) &&
+          !( m_nTileNumber % 2 ) ) || ( static_cast <uint32_t> ( TileType::HEART )        < m_nTileNumber &&
+                                        static_cast <uint32_t> ( TileType::WHITE_SQUARE ) > m_nTileNumber ) )
+    {
+        m_TileType = TileType::BRICK;
+    }
+    else if( m_nTileNumber <= 9 && m_nTileNumber % 2 )
+    {
+        m_TileType = TileType::GRANITE;
+    }
+    else if( static_cast <uint32_t> ( TileType::FOREST ) <= m_nTileNumber &&
+             static_cast <uint32_t> ( TileType::ICE )    >= m_nTileNumber )
+    {
+         m_TileType = static_cast <TileType> ( m_nTileNumber );
+    }
+    else if( static_cast <uint32_t> ( TileType::ICE )   <  m_nTileNumber &&
+             static_cast <uint32_t> ( TileType::HEART ) >= m_nTileNumber )
+    {
+         m_TileType = TileType::HEART;
+    }
+    else
+    {
+        m_TileType = TileType::EMPTY;
+    }
+}
 
 void MapObject::calcTileRealSize()
 {
@@ -113,6 +142,7 @@ void MapObject::fillTileAtomsArr()
 void MapObject::setSourceRectNumber( size_t nTileNumber )
 {
     m_nTileNumber = nTileNumber;
+    determineTileType();
 
     if( nTileNumber < COLLISION_INFO.m_SizeCoeffArr.size() )
     {
@@ -287,6 +317,33 @@ bool MapObject::checkCollisionWithLine( SDL_Point Point1, SDL_Point Point2 )
 
 void MapObject::destroy( SDL_Rect DestroyingRect, CommonTanksProperties::MoveDirection moveDirection )
 {
+    if( TileType::GRANITE == m_TileType )
+    {
+        int &DestroyingDepth = DestroyingRect.w > DestroyingRect.h ? DestroyingRect.h : DestroyingRect.w;
+
+        if( DestroyingDepth < m_TileRect.w / 2 )
+        {
+            return;
+        }
+        else
+        {
+            DestroyingDepth /= 2;
+
+            if( CommonTanksProperties::MoveDirection::DOWN == moveDirection )
+            {
+                DestroyingRect.y += DestroyingRect.h;
+            }
+            else if( CommonTanksProperties::MoveDirection::LEFT == moveDirection )
+            {
+                DestroyingRect.x += DestroyingRect.w;
+            }
+        }
+    }
+    else if( m_TileType != TileType::BRICK )
+    {
+        return;
+    }
+
     destroyingRectAlignment( DestroyingRect, moveDirection );
 
     for( size_t i = 0, nVcSize = m_TileAtomsVc.size(); i < nVcSize; ++i )
