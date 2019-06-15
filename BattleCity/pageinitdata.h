@@ -11,27 +11,26 @@
 
 struct InitContainers
 {
-    InitContainers(): m_pDisplayedObjVc( std::make_shared <std::vector <pSharedDisplayedObj>> ()) {}
-    InitContainers( std::shared_ptr <std::vector <pSharedDisplayedObj>> pDisplayedObjVc, std::vector < pSharedButton > ButtonVc,
-                    pSharedMap pMap ):
-        m_pDisplayedObjVc( pDisplayedObjVc ),
-        m_ButtonVc       ( ButtonVc        ),
-        m_pMap           ( pMap            ) {}
+    InitContainers() {}
+    InitContainers( std::vector <pSharedDisplayedObj> DisplayedObjVc, std::vector < pSharedButton > ButtonVc, pSharedMap pMap ):
+        m_DisplayedObjVc( DisplayedObjVc ),
+        m_ButtonVc      ( ButtonVc       ),
+        m_pMap          ( pMap           ) {}
 
-    InitContainers( const InitContainers &rObj ):
-        m_pDisplayedObjVc( rObj.m_pDisplayedObjVc ),
-        m_ButtonVc       ( rObj.m_ButtonVc        ),
-        m_pMap           ( rObj.m_pMap            ) {}
+    InitContainers( const InitContainers &rObj  ):
+        m_DisplayedObjVc( rObj.m_DisplayedObjVc ),
+        m_ButtonVc      ( rObj.m_ButtonVc       ),
+        m_pMap          ( rObj.m_pMap           ) {}
 
     InitContainers( const InitContainers &&rObj ):
-        m_pDisplayedObjVc( std::move( rObj.m_pDisplayedObjVc )),
-        m_ButtonVc       ( std::move( rObj.m_ButtonVc        )),
-        m_pMap           ( std::move( rObj.m_pMap            )) {}
+        m_DisplayedObjVc( std::move( rObj.m_DisplayedObjVc  )),
+        m_ButtonVc      ( std::move( rObj.m_ButtonVc        )),
+        m_pMap          ( std::move( rObj.m_pMap            )) {}
 
     ~InitContainers() {}
 
-    std::shared_ptr <std::vector <pSharedDisplayedObj>> m_pDisplayedObjVc;
-    std::vector     <pSharedButton>                     m_ButtonVc;
+    std::vector <pSharedDisplayedObj> m_DisplayedObjVc;
+    std::vector <pSharedButton>       m_ButtonVc;
     pSharedMap m_pMap;
 };
 

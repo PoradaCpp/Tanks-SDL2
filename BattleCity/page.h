@@ -17,7 +17,7 @@ class Page
 public:
     Page() {}
     Page( InitContainers &&objContainers ):
-          m_pDisplayedObjVc( std::move( objContainers.m_pDisplayedObjVc )),
+          m_DisplayedObjVc( std::move( objContainers.m_DisplayedObjVc )),
           m_ButtonVc       ( std::move( objContainers.m_ButtonVc       )),
           m_pMap           ( std::move( objContainers.m_pMap           ))
     {}
@@ -28,9 +28,9 @@ public:
 
     virtual void resize()
     {
-        if( !m_pDisplayedObjVc->empty() )
+        if( !m_DisplayedObjVc.empty() )
         {
-            std::for_each( m_pDisplayedObjVc->begin(), m_pDisplayedObjVc->end(), [] ( pSharedDisplayedObj &pDisplayedObj )
+            std::for_each( m_DisplayedObjVc.begin(), m_DisplayedObjVc.end(), [] ( pSharedDisplayedObj &pDisplayedObj )
             {
                 pDisplayedObj->changeSize();
             });
@@ -51,9 +51,9 @@ public:
             });
         }
 
-        if( !m_pDisplayedObjVc->empty() )
+        if( !m_DisplayedObjVc.empty() )
         {
-            std::for_each( m_pDisplayedObjVc->begin(), m_pDisplayedObjVc->end(), [] ( pSharedDisplayedObj &pDisplayedObj )
+            std::for_each( m_DisplayedObjVc.begin(), m_DisplayedObjVc.end(), [] ( pSharedDisplayedObj &pDisplayedObj )
             {
                 if( pDisplayedObj )
                 {
@@ -64,9 +64,9 @@ public:
     }
 
 protected:
-    std::shared_ptr <std::vector <pSharedDisplayedObj>>  m_pDisplayedObjVc;
-    std::vector <pSharedButton>                          m_ButtonVc;
-    std::vector <pSharedDynObj>                          m_DynObjVc;
+    std::vector <pSharedDisplayedObj>  m_DisplayedObjVc;
+    std::vector <pSharedButton>        m_ButtonVc;
+    std::vector <pSharedDynObj>        m_DynObjVc;
     pSharedMap m_pMap;
 };
 

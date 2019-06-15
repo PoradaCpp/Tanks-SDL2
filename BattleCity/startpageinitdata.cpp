@@ -65,25 +65,25 @@ StartPageInitData::~StartPageInitData() {}
 
 void StartPageInitData::init()
 {
-    m_InitContainers.m_pDisplayedObjVc->reserve( m_ImgInitVc.size() + m_Tex3DInitVc.size() + m_ButtonInitVc.size() );
+    m_InitContainers.m_DisplayedObjVc.reserve( m_ImgInitVc.size() + m_Tex3DInitVc.size() + m_ButtonInitVc.size() );
 
     std::for_each( m_ImgInitVc.begin(), m_ImgInitVc.end(), [ this ] ( ImgTextureInitData initData )
     {
-        m_InitContainers.m_pDisplayedObjVc->push_back( std::make_shared < Texture > ( initData, m_Renderer ) );
+        m_InitContainers.m_DisplayedObjVc.push_back( std::make_shared < Texture > ( initData, m_Renderer ) );
     });
 
     std::for_each( m_Tex3DInitVc.begin(), m_Tex3DInitVc.end(), [ this ] ( Text3DInitData initData )
     {
-        m_InitContainers.m_pDisplayedObjVc->push_back( std::make_shared < Text3D > ( initData, m_Renderer ) );
+        m_InitContainers.m_DisplayedObjVc.push_back( std::make_shared < Text3D > ( initData, m_Renderer ) );
     });
 
     std::for_each( m_ButtonInitVc.begin(), m_ButtonInitVc.end(), [ this ] ( ButtonInitData initData )
     {
         auto ptr = std::make_shared < ButtonNamed > ( initData, m_Renderer );
-        m_InitContainers.m_pDisplayedObjVc->push_back( ptr );
+        m_InitContainers.m_DisplayedObjVc.push_back( ptr );
         m_InitContainers.m_ButtonVc.push_back( ptr );
     });
 
     auto ptr = std::make_shared < TankArrow > ( m_TankArrowInitData, m_Renderer );
-    m_InitContainers.m_pDisplayedObjVc->push_back( ptr );
+    m_InitContainers.m_DisplayedObjVc.push_back( ptr );
 }

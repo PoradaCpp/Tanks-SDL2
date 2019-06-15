@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <array>
+#include <list>
 #include <memory>
 
 #include "dynamicobject.h"
@@ -16,14 +17,15 @@ class GameEngine
 public:
     friend class Tank;
 
-    GameEngine( std::shared_ptr <std::vector <pSharedDisplayedObj>> pDisplayedObjVc, std::vector <AnimationInitData> AnimInitDataVc,
-                std::vector <ImgTextureInitData> TextureInitDataVc, Renderer renderer, pSharedMap pMap );
+    GameEngine( std::vector <AnimationInitData> AnimInitDataVc, std::vector <ImgTextureInitData> TextureInitDataVc,
+                Renderer renderer, pSharedMap pMap );
     ~GameEngine();
 
     void attachGlobalGameState( State *pGlobalGameState );
     void updateNumOfPlayers();
     void gameAction();
     void resize();
+    void render();
 
     static const size_t   MAX_ACTIVE_TANKS_NUMBER        = 8;
     static const uint32_t MAX_NUM_OF_ENEMIES             = 20;
@@ -73,9 +75,8 @@ private:
     std::vector <SDL_Rect> m_EnemyBirthPlaceVc;
 
     State *m_pGlobalGameState;
-    std::vector <pSharedTank> m_TanksVc;
-    std::vector <pSharedTankShell> m_TankShellsVc;
-    std::shared_ptr <std::vector <pSharedDisplayedObj>> m_pDisplayedObjVc;
+    std::list <pSharedTank> m_TanksList;
+    std::list <pSharedTankShell> m_TankShellsList;
     std::vector <Animation> m_AnimTextureVc;
     std::vector <Texture>   m_TextureVc;
     std::vector <SDL_Rect>  m_EnemyImagesPlaceVc;

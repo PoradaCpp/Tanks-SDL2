@@ -64,7 +64,6 @@ protected:
     SDL_Rect calcPossiblePos( SDL_Rect &NewPos, CommonTanksProperties::MoveDirection NewDirection );
     bool alignmentAfterTurn( SDL_Rect &PossiblePos );
     bool alignmentAfterResize( SDL_Rect &PossiblePos );
-    bool checkTankCollision();
     bool checkTankCollision( const SDL_Rect &Rect );
     bool checkNewPosition( SDL_Rect &NewPos );
     bool newPositionProcessing();

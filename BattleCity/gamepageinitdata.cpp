@@ -78,38 +78,37 @@ GamePageInitData::~GamePageInitData() {}
 
 void GamePageInitData::init()
 {
-    m_InitContainers.m_pDisplayedObjVc->reserve( m_ImgInitVc1.size() + m_Tex3DInitVc.size() + m_ButtonInitVc.size()
+    m_InitContainers.m_DisplayedObjVc.reserve( m_ImgInitVc1.size() + m_Tex3DInitVc.size() + m_ButtonInitVc.size()
                                                + m_ButtonNamedInitVc.size());
 
     std::for_each( m_ImgInitVc1.begin(), m_ImgInitVc1.end(), [this] ( ImgTextureInitData initData )
     {
-        m_InitContainers.m_pDisplayedObjVc->push_back( std::make_shared <Texture> ( initData, m_Renderer ) );
+        m_InitContainers.m_DisplayedObjVc.push_back( std::make_shared <Texture> ( initData, m_Renderer ) );
     });
 
     std::for_each( m_Tex3DInitVc.begin(), m_Tex3DInitVc.end(), [this] ( Text3DInitData initData )
     {
-        m_InitContainers.m_pDisplayedObjVc->push_back( std::make_shared <Text3D> ( initData, m_Renderer ) );
+        m_InitContainers.m_DisplayedObjVc.push_back( std::make_shared <Text3D> ( initData, m_Renderer ) );
     });
 
     std::for_each( m_ButtonInitVc.begin(), m_ButtonInitVc.end(), [this] ( ButtonInitData initData )
     {
         auto ptr = std::make_shared <Button> ( initData, m_Renderer );
-        m_InitContainers.m_pDisplayedObjVc->push_back( ptr );
+        m_InitContainers.m_DisplayedObjVc.push_back( ptr );
         m_InitContainers.m_ButtonVc.push_back( ptr );
     });
 
     std::for_each( m_ButtonNamedInitVc.begin(), m_ButtonNamedInitVc.end(), [this] ( ButtonInitData initData )
     {
         auto ptr = std::make_shared <ButtonNamed> ( initData, m_Renderer );
-        m_InitContainers.m_pDisplayedObjVc->push_back( ptr );
+        m_InitContainers.m_DisplayedObjVc.push_back( ptr );
         m_InitContainers.m_ButtonVc.push_back( ptr );
     });
 
     m_InitContainers.m_pMap = std::make_shared <Map> ( m_MapInitData, m_Renderer );
-    m_InitContainers.m_pDisplayedObjVc->push_back( m_InitContainers.m_pMap );
+    m_InitContainers.m_DisplayedObjVc.push_back( m_InitContainers.m_pMap );
 
-    m_pGameEngine = std::make_shared <GameEngine> ( m_InitContainers.m_pDisplayedObjVc, m_AnimationInitDataVc, m_ImgInitVc2,
-                                                    m_Renderer, m_InitContainers.m_pMap );
+    m_pGameEngine = std::make_shared <GameEngine> ( m_AnimationInitDataVc, m_ImgInitVc2, m_Renderer, m_InitContainers.m_pMap );
 }
 
 GamePageInitData::operator pSharedGameEngine && ()

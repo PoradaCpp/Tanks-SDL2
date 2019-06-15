@@ -73,6 +73,7 @@ void GamePage::render()
     Page::render();
     m_pGameEngine->gameAction();
     renderMapBorder();
+    m_pGameEngine->render();
 }
 
 void GamePage::renderMapBorder()

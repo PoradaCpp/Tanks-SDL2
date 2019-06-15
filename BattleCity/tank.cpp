@@ -205,25 +205,11 @@ bool Tank::alignmentAfterResize (SDL_Rect &PossiblePos)
     return fEnd;
 }
 
-bool Tank::checkTankCollision()
-{
-    for( size_t i = 0, nVectorSize = m_pGameEngine->m_TanksVc.size(); i < nVectorSize; ++i )
-    {
-        if( m_pGameEngine->m_TanksVc.at(i).get() != this &&
-            SDL_HasIntersection( m_pRealCurPos,m_pGameEngine->m_TanksVc.at(i)->m_pRealCurPos ))
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 bool Tank::checkTankCollision( const SDL_Rect &Rect )
 {
-    for( size_t i = 0, nVectorSize = m_pGameEngine->m_TanksVc.size(); i < nVectorSize; ++i )
+    for( pSharedTank &pTank: m_pGameEngine->m_TanksList )
     {
-        if( m_pGameEngine->m_TanksVc.at(i).get() != this &&
-            SDL_HasIntersection( &Rect, m_pGameEngine->m_TanksVc.at(i)->m_pRealCurPos ))
+        if( pTank.get() != this && SDL_HasIntersection( &Rect, pTank->m_pRealCurPos ))
         {
             return true;
         }

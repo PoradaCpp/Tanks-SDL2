@@ -14,20 +14,17 @@ const RelativeRect GameEngine::ENEMY2_BIRTH_POS  = { 27, 2.5, 5.7, 10 };
 const RelativeRect GameEngine::ENEMY3_BIRTH_POS  = { 51, 2.5, 5.7, 10 };
 const RelativeRect GameEngine::ENEMY4_BIRTH_POS  = { 76, 2.5, 5.7, 10 };
 
-//std::vector <SDL_Rect> vc1, vc2;
 
 const std::array <const RelativeRect*, 4> GameEngine::ENEMY_BIRTH_PLACE_ARR{ &ENEMY1_BIRTH_POS, &ENEMY2_BIRTH_POS,
                                                                              &ENEMY3_BIRTH_POS, &ENEMY4_BIRTH_POS };
 
-GameEngine::GameEngine( std::shared_ptr <std::vector <pSharedDisplayedObj> > pDisplayedObjVc,
-                        std::vector<AnimationInitData> AnimInitDataVc, std::vector<ImgTextureInitData> TextureInitDataVc,
+GameEngine::GameEngine( std::vector<AnimationInitData> AnimInitDataVc, std::vector<ImgTextureInitData> TextureInitDataVc,
                         Renderer renderer, pSharedMap pMap ):
-    m_pGlobalGameState( nullptr), m_pDisplayedObjVc( pDisplayedObjVc ), m_Renderer( renderer ), m_pMap( pMap ),
-    m_NumOfPlayers( NumOfPlayers::ONE_PLAYER ), m_nNumOfEnemies( 0 ),
-    m_nNumOfEnemiesOnMap( NUM_OF_ENEMIES_ON_MAP_1PLAYER ), m_nNumOfEnemiesAlive( 0 ), m_nPlayer1Lives( START_PLAYERS_LIVES ),
-    m_nPlayer2Lives( 0 ), m_fPlayer1Alive( false ), m_fPlayer2Alive( false ), m_GameState( GameState::GAME_OFF ), m_Rand1_4( 1, 4 )
+    m_pGlobalGameState( nullptr), m_Renderer( renderer ), m_pMap( pMap ), m_NumOfPlayers( NumOfPlayers::ONE_PLAYER ),
+    m_nNumOfEnemies( 0 ), m_nNumOfEnemiesOnMap( NUM_OF_ENEMIES_ON_MAP_1PLAYER ), m_nNumOfEnemiesAlive( 0 ),
+    m_nPlayer1Lives( START_PLAYERS_LIVES ), m_nPlayer2Lives( 0 ), m_fPlayer1Alive( false ), m_fPlayer2Alive( false ),
+    m_GameState( GameState::GAME_OFF ), m_Rand1_4( 1, 4 )
 {
-    m_TanksVc.reserve( MAX_ACTIVE_TANKS_NUMBER );
     m_AnimTextureVc.reserve( AnimInitDataVc.size() );
     std::for_each( AnimInitDataVc.begin(), AnimInitDataVc.end(), [this, renderer] ( AnimationInitData InitData )
     {
@@ -167,18 +164,6 @@ void GameEngine::livesAndEnemies()
             break;
         }
     }
-
-    /*SDL_SetRenderDrawColor( m_Renderer, 0, 0, 255, 255 );
-    std::for_each( vc1.begin(), vc1.end(), [this] ( SDL_Rect &rect )
-    {
-        SDL_RenderDrawRect( m_Renderer, &rect );
-    });
-
-    SDL_SetRenderDrawColor( m_Renderer, 255, 0, 0, 255 );
-    std::for_each( vc2.begin(), vc2.end(), [this] ( SDL_Rect &rect )
-    {
-        SDL_RenderFillRect( m_Renderer, &rect );
-    });*/
 }
 
 void GameEngine::attachGlobalGameState( State *pGlobalGameState )
@@ -200,36 +185,32 @@ void GameEngine::updateNumOfPlayers()
 
 void GameEngine::gameAction()
 {
-    livesAndEnemies();
-
     if( GameState::GAME_ON == m_GameState )
     {
         if( m_nPlayer1Lives && !m_fPlayer1Alive )
         {
-            pSharedTank pTankOfPlayer1 =
-                    std::make_shared <TankOfPlayer> ( m_AnimTextureVc.at( static_cast <size_t> ( AnimPurpose::TANK_MOVE_ANIM      ) ),
+            m_TanksList.push_back( std::make_shared <TankOfPlayer> (
+                                                      m_AnimTextureVc.at( static_cast <size_t> ( AnimPurpose::TANK_MOVE_ANIM      ) ),
                                                       m_AnimTextureVc.at( static_cast <size_t> ( AnimPurpose::TANK_EXPLOSION_ANIM ) ),
                                                       m_AnimTextureVc.at( static_cast <size_t> ( AnimPurpose::BOMB_EXPLOSION_ANIM ) ),
-                                                      m_pMap, PLAYER1_BIRTH_POS, this );
-            pTankOfPlayer1->attachProperties( std::make_shared <PlayersTankProperties>
+                                                      m_pMap, PLAYER1_BIRTH_POS, this ));
+
+            m_TanksList.back()->attachProperties( std::make_shared <PlayersTankProperties>
                                               ( CommonTanksProperties::TankOwnerIdentity::PLAYER1,
                                                 CommonTanksProperties::TankType::ORDINARY_TANK ));
-            m_TanksVc.push_back( pTankOfPlayer1 );
-            m_pDisplayedObjVc->push_back( pTankOfPlayer1 );
             m_fPlayer1Alive = true;
         }
 
         if( m_nPlayer2Lives && !m_fPlayer2Alive )
         {
-            pSharedTank pTankOfPlayer2 =
-                    std::make_shared <TankOfPlayer> ( m_AnimTextureVc.at( static_cast <size_t> ( AnimPurpose::TANK_MOVE_ANIM      ) ),
+            m_TanksList.push_back( std::make_shared <TankOfPlayer> (
+                                                      m_AnimTextureVc.at( static_cast <size_t> ( AnimPurpose::TANK_MOVE_ANIM      ) ),
                                                       m_AnimTextureVc.at( static_cast <size_t> ( AnimPurpose::TANK_EXPLOSION_ANIM ) ),
                                                       m_AnimTextureVc.at( static_cast <size_t> ( AnimPurpose::BOMB_EXPLOSION_ANIM ) ),
-                                                      m_pMap, PLAYER2_BIRTH_POS, this );
-            pTankOfPlayer2->attachProperties( std::make_shared <PlayersTankProperties>
-                                              ( CommonTanksProperties::TankOwnerIdentity::PLAYER2 ));
-            m_TanksVc.push_back( pTankOfPlayer2 );
-            m_pDisplayedObjVc->push_back( pTankOfPlayer2 );
+                                                      m_pMap, PLAYER2_BIRTH_POS, this ));
+
+            m_TanksList.back()->attachProperties( std::make_shared <PlayersTankProperties>
+                                                  ( CommonTanksProperties::TankOwnerIdentity::PLAYER2 ));
             m_fPlayer2Alive = true;
         }
 
@@ -250,9 +231,9 @@ void GameEngine::gameAction()
                 pBirthPlace = ENEMY_BIRTH_PLACE_ARR.at( i );
                 BirthPlace = m_EnemyBirthPlaceVc.at( i );
 
-                for( size_t j = 0, nVectorSize = m_TanksVc.size(); j < nVectorSize; ++j )
+                for( pSharedTank &pTank: m_TanksList )
                 {
-                    if( SDL_HasIntersection( &( m_TanksVc.at( j )->m_AnimCurPos ), &BirthPlace ) )
+                    if( SDL_HasIntersection( &( pTank->m_AnimCurPos ), &BirthPlace ) )
                     {
                         pBirthPlace = nullptr;
                         break;
@@ -280,33 +261,31 @@ void GameEngine::gameAction()
                     break;
                 }
 
-                pSharedTank pTankOfEnemy =
-                     std::make_shared <TankOfEnemy> ( m_AnimTextureVc.at( static_cast <size_t> ( AnimPurpose::TANK_MOVE_ANIM      ) ),
+                m_TanksList.push_back( std::make_shared <TankOfEnemy> (
+                                                      m_AnimTextureVc.at( static_cast <size_t> ( AnimPurpose::TANK_MOVE_ANIM      ) ),
                                                       m_AnimTextureVc.at( static_cast <size_t> ( AnimPurpose::TANK_EXPLOSION_ANIM ) ),
                                                       m_AnimTextureVc.at( static_cast <size_t> ( AnimPurpose::BOMB_EXPLOSION_ANIM ) ),
-                                                      m_pMap, *pBirthPlace, this, moveDirection );
+                                                      m_pMap, *pBirthPlace, this, moveDirection ));
 
-                pTankOfEnemy->attachProperties( std::make_shared <EnemyTankProperties>( static_cast <CommonTanksProperties::TankType>
-                                                                                        ( m_Rand1_4() ), fBonusTank ));
-                m_TanksVc.push_back( pTankOfEnemy );
-                m_pDisplayedObjVc->push_back( pTankOfEnemy );
+                m_TanksList.back()->attachProperties( std::make_shared <EnemyTankProperties>( static_cast <CommonTanksProperties::TankType>
+                                                                                            ( m_Rand1_4() ), fBonusTank ));
                 ++m_nNumOfEnemiesAlive;
                 ++m_nNumOfEnemies;
             }
         }
 
-        std::for_each( m_TanksVc.begin(), m_TanksVc.end(), [this] ( pSharedTank &pTank )
+        std::for_each( m_TanksList.begin(), m_TanksList.end(), [this] ( pSharedTank &pTank )
         {
-            pTank->changePosition();            
+            pTank->changePosition();
             auto pShell = pTank->tankShot();
 
             if( pShell )
             {
-                m_TankShellsVc.push_back( pShell );
+                m_TankShellsList.push_back( pShell );
             }
         });
 
-        m_TanksVc.erase( std::remove_if( m_TanksVc.begin(), m_TanksVc.end(), [this] ( pSharedTank &pTank )
+        m_TanksList.remove_if( [this] ( pSharedTank &pTank )
         {
             if( pTank->isDestroyed() )
             {
@@ -327,17 +306,16 @@ void GameEngine::gameAction()
             }
             return pTank->isDestroyed();
 
-        }),  m_TanksVc.end() );
+        });
 
-        m_TankShellsVc.erase( std::remove_if( m_TankShellsVc.begin(), m_TankShellsVc.end(), [] ( pSharedTankShell &pShell )
+        m_TankShellsList.remove_if( [] ( pSharedTankShell &pShell )
         {
             return pShell->isExplosed();
-        }),  m_TankShellsVc.end() );
+        });
 
-        std::for_each( m_TankShellsVc.begin(), m_TankShellsVc.end(), [this] ( pSharedTankShell &pShell )
+        std::for_each( m_TankShellsList.begin(), m_TankShellsList.end(), [this] ( pSharedTankShell &pShell )
         {
             pShell->changePosition();
-            pShell->render();
 
             if( !pShell->getExplosion() && m_pMap->checkCollision( pShell->getCollisionPosition() ) )
             {
@@ -346,14 +324,10 @@ void GameEngine::gameAction()
                 if( !m_pMap->checkBorderCollision( pShell->getCollisionPosition() ))
                 {
                     m_pMap->destroy( pShell->getCollisionPosition(), pShell->getDestoyingVolume(), pShell->getMoveDirection() );
-                    //std::cout << "x: " << pShell->getDestoyingVolume().x << ", y: " << pShell->getDestoyingVolume().y
-                    //          << ", w: " << pShell->getDestoyingVolume().w << ", h: " << pShell->getDestoyingVolume().h << '\n';
-                    //vc1.push_back( pShell->getDestoyingVolume() );
-                    //vc2.push_back( pShell->getCollisionPosition() );
                 }
             }
 
-            std::for_each( m_TanksVc.begin(), m_TanksVc.end(), [&pShell] ( pSharedTank &pTank )
+            std::for_each( m_TanksList.begin(), m_TanksList.end(), [&pShell] ( pSharedTank &pTank )
             {
                 if( !pTank->isNoLives() && !pShell->getExplosion() &&
                     pTank->checkTankShellCollision( pShell->getCollisionPosition(), pShell->getOwnerIdentity() ) )
@@ -362,7 +336,7 @@ void GameEngine::gameAction()
                 }
             });
 
-            std::for_each( m_TankShellsVc.begin(), m_TankShellsVc.end(), [&pShell] ( pSharedTankShell &pAnotherShell )
+            std::for_each( m_TankShellsList.begin(), m_TankShellsList.end(), [&pShell] ( pSharedTankShell &pAnotherShell )
             {
                 if( pShell->getOwnerIdentity() != pAnotherShell->getOwnerIdentity() && !pShell->getExplosion() &&
                     !pAnotherShell->getExplosion() )
@@ -401,4 +375,19 @@ void GameEngine::resize()
     });
 
     calcLiveRectSize();
+}
+
+void GameEngine::render()
+{
+    livesAndEnemies();
+
+    std::for_each( m_TankShellsList.begin(), m_TankShellsList.end(), [] ( pSharedTankShell &pShell )
+    {
+        pShell->render();
+    });
+
+    std::for_each( m_TanksList.begin(), m_TanksList.end(), [] ( pSharedTank &pTank )
+    {
+        pTank->render();
+    });
 }
