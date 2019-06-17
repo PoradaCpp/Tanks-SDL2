@@ -11,6 +11,7 @@
 #include "tank.h"
 #include "state.h"
 #include "random_uint32_t.h"
+#include "playersheart.h"
 
 class GameEngine
 {
@@ -18,7 +19,7 @@ public:
     friend class Tank;
 
     GameEngine( std::vector <AnimationInitData> AnimInitDataVc, std::vector <ImgTextureInitData> TextureInitDataVc,
-                Renderer renderer, pSharedMap pMap );
+                AnimationInitData AnimInitData, Renderer renderer, pSharedMap pMap );
     ~GameEngine();
 
     void attachGlobalGameState( State *pGlobalGameState );
@@ -81,6 +82,7 @@ private:
     std::vector <SDL_Rect>  m_EnemyImagesPlaceVc;
     std::vector <SDL_Rect>  m_Player1ImagesPlaceVc;
     std::vector <SDL_Rect>  m_Player2ImagesPlaceVc;
+    PlayersHeart m_PlayersHeart;
     SDL_Rect m_Player1BirthPlace;
     SDL_Rect m_Player2BirthPlace;
     Renderer m_Renderer;

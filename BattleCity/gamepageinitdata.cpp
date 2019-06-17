@@ -46,7 +46,9 @@ GamePageInitData::GamePageInitData( Renderer renderer ):
         {{ "media/images/tanks/complite_tanks_animation.png", { 0, 0, 0, 0 }, { 1.3, 2.3, 81.2, 93.6 } }, 4, 26 },
         {{ "media/images/tanks/tank_explosion_animation.png", { 0, 0, 0, 0 }, { 1.3, 2.3, 81.2, 93.6 } }, 4, 16 },
         {{ "media/images/tanks/bomb_explosion_animation.png", { 0, 0, 0, 0 }, { 1.3, 2.3, 81.2, 93.6 } }, 4, 12 },
-     })
+     }),
+
+     m_HeartAnimInitData({ "media/images/heart_anim.png", { 39, 86, 5.7, 10 }, { 1.3, 2.3, 81.2, 93.6 } }, 4, 6, 12 )
 {
     init();
 }
@@ -58,6 +60,7 @@ GamePageInitData::GamePageInitData( std::vector < ImgTextureInitData > &&ImgText
                                     std::vector <ButtonInitData> &&ButtonNamedInitVc,
                                     MapInitData mapInitData,
                                     std::vector<AnimationInitData> AnimationInitDataVc,
+                                    AnimationInitData HeartAnimInitData,
                                     Renderer renderer ):
 
     PageInitData         ( renderer                      ),
@@ -67,7 +70,8 @@ GamePageInitData::GamePageInitData( std::vector < ImgTextureInitData > &&ImgText
     m_ButtonInitVc       ( std::move( ButtonInitVc      )),
     m_ButtonNamedInitVc  ( std::move( ButtonNamedInitVc )),
     m_MapInitData        ( mapInitData                   ),
-    m_AnimationInitDataVc( AnimationInitDataVc           )
+    m_AnimationInitDataVc( AnimationInitDataVc           ),
+    m_HeartAnimInitData  ( HeartAnimInitData             )
 {
     init();
 }
@@ -108,7 +112,8 @@ void GamePageInitData::init()
     m_InitContainers.m_pMap = std::make_shared <Map> ( m_MapInitData, m_Renderer );
     m_InitContainers.m_DisplayedObjVc.push_back( m_InitContainers.m_pMap );
 
-    m_pGameEngine = std::make_shared <GameEngine> ( m_AnimationInitDataVc, m_ImgInitVc2, m_Renderer, m_InitContainers.m_pMap );
+    m_pGameEngine = std::make_shared <GameEngine> ( m_AnimationInitDataVc, m_ImgInitVc2, m_HeartAnimInitData, m_Renderer,
+                                                    m_InitContainers.m_pMap );
 }
 
 GamePageInitData::operator pSharedGameEngine && ()

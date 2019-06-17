@@ -205,18 +205,6 @@ bool Tank::alignmentAfterResize (SDL_Rect &PossiblePos)
     return fEnd;
 }
 
-bool Tank::checkTankCollision( const SDL_Rect &Rect )
-{
-    for( pSharedTank &pTank: m_pGameEngine->m_TanksList )
-    {
-        if( pTank.get() != this && SDL_HasIntersection( &Rect, pTank->m_pRealCurPos ))
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 bool Tank::checkNewPosition( SDL_Rect &NewPos )
 {
     m_fMove = true;
@@ -421,8 +409,8 @@ bool Tank::isDestroyed()
 bool Tank::checkTankShellCollision( const SDL_Rect &Rect, CommonTanksProperties::TankOwnerIdentity tankOwnerIdentity )
 {
     if( ( SDL_HasIntersection( &Rect, m_pRealCurPos ) ) && (( m_pProperties->m_TankOwnerIdentity != tankOwnerIdentity ) &&
-          (( CommonTanksProperties::TankOwnerIdentity::ENEMY == tankOwnerIdentity ) ||
-           ( CommonTanksProperties::TankOwnerIdentity::ENEMY == m_pProperties->m_TankOwnerIdentity )) ) )
+       (( CommonTanksProperties::TankOwnerIdentity::ENEMY == tankOwnerIdentity ) ||
+        ( CommonTanksProperties::TankOwnerIdentity::ENEMY == m_pProperties->m_TankOwnerIdentity )) ) )
     {
         if( m_pProperties->m_fBonus )
         {
@@ -433,6 +421,18 @@ bool Tank::checkTankShellCollision( const SDL_Rect &Rect, CommonTanksProperties:
             --m_pProperties->m_nNumberOfLives;
         }
         return true;
+    }
+    return false;
+}
+
+bool Tank::checkTankCollision( const SDL_Rect &Rect )
+{
+    for( pSharedTank &pTank: m_pGameEngine->m_TanksList )
+    {
+        if( pTank.get() != this && SDL_HasIntersection( &Rect, pTank->m_pRealCurPos ))
+        {
+            return true;
+        }
     }
     return false;
 }

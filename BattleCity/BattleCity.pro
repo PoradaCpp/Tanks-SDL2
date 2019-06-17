@@ -7,6 +7,7 @@ SOURCES += main.cpp \
     animation.cpp \
     gameengine.cpp \
     mainwindow.cpp \
+    playersheart.cpp \
     random_uint32_t.cpp \
     surface.cpp \
     startpage.cpp \
@@ -51,6 +52,7 @@ HEADERS += \
     gameengine.h \
     mainwindow.h \
     pageinitdata.h \
+    playersheart.h \
     random_uint32_t.h \
     surface.h \
     page.h \

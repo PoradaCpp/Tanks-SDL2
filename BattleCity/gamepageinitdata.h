@@ -15,10 +15,10 @@ class GamePageInitData: public PageInitData
 public:
     GamePageInitData( Renderer renderer );
 
-    GamePageInitData( std::vector <ImgTextureInitData> &&ImgTextureInitVc1, std::vector <ImgTextureInitData> &&ImgTextureInitVc2,
+    GamePageInitData(std::vector <ImgTextureInitData> &&ImgTextureInitVc1, std::vector <ImgTextureInitData> &&ImgTextureInitVc2,
                       std::vector <Text3DInitData> &&Text3DInitVc, std::vector <ButtonInitData> &&ButtonInitVc,
                       std::vector<ButtonInitData> &&ButtonNamedInitVc, MapInitData mapInitData,
-                      std::vector <AnimationInitData> AnimationInitDataVc, Renderer renderer );
+                      std::vector <AnimationInitData> AnimationInitDataVc, AnimationInitData m_HeartAnimInitData, Renderer renderer );
 
     ~GamePageInitData() override;
 
@@ -34,6 +34,7 @@ private:
     MapInitData                      m_MapInitData;
     std::vector <AnimationInitData>  m_AnimationInitDataVc;
     pSharedGameEngine                m_pGameEngine;
+    AnimationInitData                m_HeartAnimInitData;
 };
 
 #endif // GAMEPAGEINITDATA_H

@@ -19,11 +19,11 @@ const std::array <const RelativeRect*, 4> GameEngine::ENEMY_BIRTH_PLACE_ARR{ &EN
                                                                              &ENEMY3_BIRTH_POS, &ENEMY4_BIRTH_POS };
 
 GameEngine::GameEngine( std::vector<AnimationInitData> AnimInitDataVc, std::vector<ImgTextureInitData> TextureInitDataVc,
-                        Renderer renderer, pSharedMap pMap ):
-    m_pGlobalGameState( nullptr), m_Renderer( renderer ), m_pMap( pMap ), m_NumOfPlayers( NumOfPlayers::ONE_PLAYER ),
-    m_nNumOfEnemies( 0 ), m_nNumOfEnemiesOnMap( NUM_OF_ENEMIES_ON_MAP_1PLAYER ), m_nNumOfEnemiesAlive( 0 ),
-    m_nPlayer1Lives( START_PLAYERS_LIVES ), m_nPlayer2Lives( 0 ), m_fPlayer1Alive( false ), m_fPlayer2Alive( false ),
-    m_GameState( GameState::GAME_OFF ), m_Rand1_4( 1, 4 )
+                        AnimationInitData AnimInitData, Renderer renderer, pSharedMap pMap ):
+    m_pGlobalGameState( nullptr), m_PlayersHeart( AnimInitData, renderer ), m_Renderer( renderer ), m_pMap( pMap ),
+    m_NumOfPlayers( NumOfPlayers::ONE_PLAYER ), m_nNumOfEnemies( 0 ), m_nNumOfEnemiesOnMap( NUM_OF_ENEMIES_ON_MAP_1PLAYER ),
+    m_nNumOfEnemiesAlive( 0 ),  m_nPlayer1Lives( START_PLAYERS_LIVES ), m_nPlayer2Lives( 0 ), m_fPlayer1Alive( false ),
+    m_fPlayer2Alive( false ), m_GameState( GameState::GAME_OFF ), m_Rand1_4( 1, 4 )
 {
     m_AnimTextureVc.reserve( AnimInitDataVc.size() );
     std::for_each( AnimInitDataVc.begin(), AnimInitDataVc.end(), [this, renderer] ( AnimationInitData InitData )
@@ -318,6 +318,14 @@ void GameEngine::tankShellsManagement()
     std::for_each( m_TankShellsList.begin(), m_TankShellsList.end(), [this] ( pSharedTankShell &pShell )
     {
         pShell->changePosition();
+        SDL_Rect ShellRect = pShell->getCollisionPosition(),
+                 HeartPos = m_PlayersHeart.getCollisionRect();
+
+        if( !pShell->getExplosion() && !m_PlayersHeart.isDestroying() && SDL_HasIntersection( &ShellRect, &HeartPos ) )
+        {
+            m_PlayersHeart.destroy();
+            pShell->setExplosion();
+        }
 
         if( !pShell->getExplosion() && m_pMap->checkCollision( pShell->getCollisionPosition() ) )
         {
@@ -388,6 +396,11 @@ void GameEngine::gameAction()
 
         tanksManagement();
         tankShellsManagement();
+
+        if( m_PlayersHeart.isDestroyed() )
+        {
+            m_GameState = GameState::GAME_OFF;
+        }
     }
 }
 
@@ -402,6 +415,8 @@ void GameEngine::resize()
     {
         texture.changeSize();
     });
+
+    m_PlayersHeart.resize();
 
     calcBirthPlacesRectSize();
     calcLiveRectSize();
@@ -420,10 +435,11 @@ void GameEngine::render()
     {
         pTank->render();
     });
+
+    m_PlayersHeart.render();
 }
 
 void GameEngine::setStartOrPause()
 {
     m_GameState = GameState::GAME_ON == m_GameState ? GameState::GAME_PAUSED : GameState::GAME_ON;
-    std::cout << ( GameState::GAME_ON != m_GameState ? "GAME_PAUSED\n" : "GAME_ON\n" );
 }

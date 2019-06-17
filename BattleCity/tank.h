@@ -32,6 +32,7 @@ public:
     virtual bool isNoLives();
     virtual bool isDestroyed();
     virtual bool checkTankShellCollision( const SDL_Rect &Rect, CommonTanksProperties::TankOwnerIdentity tankOwnerIdentity );
+    virtual bool checkTankCollision( const SDL_Rect &Rect );
 
     CommonTanksProperties::TankOwnerIdentity getOwnerIdentity() const;
     void setRelativeDestination( RelativeRect RelativeDestRect, RelativeRect RelativeBaseRect = { 0, 0, 0, 0 } );
@@ -64,7 +65,6 @@ protected:
     SDL_Rect calcPossiblePos( SDL_Rect &NewPos, CommonTanksProperties::MoveDirection NewDirection );
     bool alignmentAfterTurn( SDL_Rect &PossiblePos );
     bool alignmentAfterResize( SDL_Rect &PossiblePos );
-    bool checkTankCollision( const SDL_Rect &Rect );
     bool checkNewPosition( SDL_Rect &NewPos );
     bool newPositionProcessing();
     void calcShellPosition();
