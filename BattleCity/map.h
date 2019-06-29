@@ -32,6 +32,10 @@ public:
 
     void changeSize() override;
     void render() override;
+
+    void renderLowerLayer();
+    void renderUpperLayer();
+
     Texture getTilesTexture();
     void saveCurrentMap();
     void loadDefaultMap();
@@ -40,9 +44,12 @@ public:
     RelativeRect getRelativeBase() const;
     int getPageHeight() const;
     int getPageWidth() const;
-    bool checkCollision( const SDL_Rect &CheckingRect );
+    bool checkCollision( const SDL_Rect &CheckingRect, bool isShell = false );
     bool checkBorderCollision( const SDL_Rect &CheckingRect );
     void destroy( const SDL_Rect &CheckingRect, const SDL_Rect &DestroyingRect, CommonTanksProperties::MoveDirection moveDirection );
+    void clear();
+    void resetCurrentMapIndex();
+    bool isMapsStillPresent();
 
     static const size_t MAP_SIZE    = 504;
     static const size_t ROW_SIZE    = 28;
@@ -57,9 +64,9 @@ public:
     static constexpr SDL_Color BROWN = { 50, 40, 40, 255 };
     static constexpr SDL_Color GREY  = { 80, 80, 80, 255 };
 
-    static const size_t VECTOR_TILE_SIZE   = 20;
     static const size_t VECTOR_TILE_WIDTH  = 2;
-    static const size_t VECTOR_TILE_HEIGHT = 10;
+    static const size_t VECTOR_TILE_HEIGHT = 8;
+    static const size_t VECTOR_TILE_SIZE   = VECTOR_TILE_WIDTH * VECTOR_TILE_HEIGHT;
 
 private:
     Texture m_TilesTexture;

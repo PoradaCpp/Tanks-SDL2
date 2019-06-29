@@ -1,13 +1,14 @@
 #include <iostream>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 
 #include "state.h"
 
-State::State(): m_State( CurrentState::START_PAGE ), m_NumOfPlayers( NumOfPlayers::ONE_PLAYER /*NumOfPlayers::TWO_PLAYERS*/ )
+State::State(): m_State( CurrentState::START_PAGE ), m_NumOfPlayers( NumOfPlayers::TWO_PLAYERS ), m_fLockPlayersQuantity( false )
 {    
     //Initialize SDL
-    if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+    if( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0 )
     {
         std::cerr<< "SDL could not initialize! SDL Error: " <<  SDL_GetError() << '\n';
     }
@@ -21,17 +22,26 @@ State::State(): m_State( CurrentState::START_PAGE ), m_NumOfPlayers( NumOfPlayer
             SDL_Quit();
             std::exit(-1);
         }
-        else
-        {
-            //Initialize SDL_ttf
-           if( TTF_Init() == -1 )
-           {
-               std::cerr << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << '\n';
 
-               IMG_Quit();
-               SDL_Quit();
-               std::exit(-1);
-           }
+        //Initialize SDL_ttf
+        if( TTF_Init() == -1 )
+        {
+            std::cerr << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << '\n';
+
+            IMG_Quit();
+            SDL_Quit();
+            std::exit(-1);
+        }
+
+        //Initialize SDL_mixer
+        if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+        {
+            std::cerr << "SDL_mixer could not initialize! SDL_mixer Error: %s\n" << Mix_GetError() << '\n';
+
+            IMG_Quit();
+            TTF_Quit();
+            SDL_Quit();
+            std::exit(-1);
         }
     }
 }
@@ -96,4 +106,27 @@ CurrentState State::getState()
 NumOfPlayers State::getNumOfPlayers()
 {
     return m_NumOfPlayers;
+}
+
+void State::setPlayersQuantity( NumOfPlayers numOfPlayers )
+{
+    if( !m_fLockPlayersQuantity )
+    {
+        m_NumOfPlayers = numOfPlayers;
+    }
+}
+
+void State::lockPlayersQuantity()
+{
+    m_fLockPlayersQuantity = true;
+}
+
+void State::unlockPlayersQuantity()
+{
+    m_fLockPlayersQuantity = false;
+}
+
+bool State::isPlayersQuantityLocked()
+{
+    return m_fLockPlayersQuantity;
 }

@@ -18,9 +18,8 @@ class Tank: public DisplayedObject
 public:
     friend class GameEngine;
 
-    Tank( Animation TankMoveAnim, Animation TankExplosionAnim, Animation ShellExplosionAnim, pSharedMap pMap,
-          RelativeRect RelativeBirthPos, GameEngine *pGameEngine,
-          CommonTanksProperties::MoveDirection moveDirection = CommonTanksProperties::MoveDirection::UP );
+    Tank( Animation TankMoveAnim, Animation TankExplosionAnim, Animation ShellExplosionAnim, std::vector <AudioChunk> audioVc,
+          pSharedMap pMap, RelativeRect RelativeBirthPos, GameEngine *pGameEngine, CommonTanksProperties::MoveDirection moveDirection );
     ~Tank() override;
 
     void changeSize() override;
@@ -31,16 +30,19 @@ public:
     virtual pSharedTankShell tankShot();
     virtual bool isNoLives();
     virtual bool isDestroyed();
+    virtual bool isBonus();
     virtual bool checkTankShellCollision( const SDL_Rect &Rect, CommonTanksProperties::TankOwnerIdentity tankOwnerIdentity );
     virtual bool checkTankCollision( const SDL_Rect &Rect );
 
     CommonTanksProperties::TankOwnerIdentity getOwnerIdentity() const;
     void setRelativeDestination( RelativeRect RelativeDestRect, RelativeRect RelativeBaseRect = { 0, 0, 0, 0 } );
+    void stopMove();
 
 protected:
     Animation m_TankMoveAnim;
     Animation m_TankExplosionAnim;
     Animation m_ShellExplosionAnim;
+    std::vector <AudioChunk> m_AudioVc;
     pSharedTankProperties m_pProperties;
     pSharedMap m_pMap;
     SDL_Rect m_AnimCurPos;

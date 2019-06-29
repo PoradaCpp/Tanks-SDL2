@@ -7,6 +7,7 @@
 
 #include "text3d.h"
 #include "displayedobject.h"
+#include "buttonbase.h"
 
 struct ButtonInitData
 {
@@ -20,28 +21,20 @@ struct ButtonInitData
         m_ImgInitData( ImgInitData ) {}
 };
 
-enum class ButtonState
-{
-    DEFAULT  = 0,
-    IN_FOCUS = 1,
-    PRESSED  = 2,
-    RELEASED = 3
-};
-
-class Button: public DisplayedObject
+class Button: public ButtonBase
 {
 public:
-    typedef std::function <void()> Action;
-
     Button( ButtonInitData InitData, Renderer renderer );
     Button( ImgTextureInitData InitData, Renderer renderer );
     ~Button() override;
 
-    virtual Uint32 inFocus();
-    virtual ButtonState getState();
+    ButtonState getState();
+    Uint32 inFocus();
 
-    virtual void setAction( Action action );
-    virtual void execute();
+    void setAction( Action action ) override;
+    void execute() override;
+    void lock() override;
+    void unlock() override;
 
     void changeSize() override;
     void render() override;
@@ -52,12 +45,9 @@ protected:
     ButtonState m_State;
     std::array < SDL_Rect, 3 > m_SourceRectArr;
     SDL_Point m_CursorPos;
-
-    Action m_Action;
+    bool m_fLock;
 
     void setRenderDimensions();
 };
-
-typedef std::shared_ptr <Button> pSharedButton;
 
 #endif // BUTTON_H

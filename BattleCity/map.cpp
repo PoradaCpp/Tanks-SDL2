@@ -203,11 +203,42 @@ void Map::render()
     {
         if( pMapObject->m_nTileNumber < VECTOR_TILE_SIZE )
         {
-            pMapObject->renderTexture( m_SourceRectVc.at( pMapObject->m_nTileNumber ) );
+            pMapObject->renderLowerLayer( m_SourceRectVc.at( pMapObject->m_nTileNumber ) );
         }
         else
         {
             pMapObject->renderFillRect();
+        }
+    });
+}
+
+void Map::renderLowerLayer()
+{
+    SDL_SetRenderDrawColor( m_Renderer, BLACK.r, BLACK.g, BLACK.b, BLACK.a );
+    SDL_RenderFillRect( m_Renderer, &m_MapBordersRect );
+
+    std::for_each( m_MapVc.begin(), m_MapVc.end(), [ this ] ( pSharedMapObject &pMapObject )
+    {
+        if( pMapObject->m_nTileNumber < VECTOR_TILE_SIZE )
+        {
+            pMapObject->renderLowerLayer( m_SourceRectVc.at( pMapObject->m_nTileNumber ) );
+        }
+        else
+        {
+            pMapObject->renderFillRect();
+        }
+    });
+}
+
+void Map::renderUpperLayer()
+{
+    SDL_SetRenderDrawColor( m_Renderer, BLACK.r, BLACK.g, BLACK.b, BLACK.a );
+
+    std::for_each( m_MapVc.begin(), m_MapVc.end(), [ this ] ( pSharedMapObject &pMapObject )
+    {
+        if( pMapObject->m_nTileNumber < VECTOR_TILE_SIZE )
+        {
+            pMapObject->renderUpperLayer( m_SourceRectVc.at( pMapObject->m_nTileNumber ) );
         }
     });
 }
@@ -293,7 +324,7 @@ int Map::getPageWidth() const
     return m_TilesTexture.getPageWidth();
 }
 
-bool Map::checkCollision(const SDL_Rect &CheckingRect )
+bool Map::checkCollision(const SDL_Rect &CheckingRect, bool isShell )
 {
     if( checkBorderCollision( CheckingRect ) )
     {
@@ -314,7 +345,7 @@ bool Map::checkCollision(const SDL_Rect &CheckingRect )
                              "\nnTileDownBegin: " << nTileDownBegin << "\nnRowNum: " << nRowNum <<"\n\n";
             }
 
-            if( m_MapVc.at( i + j )->checkCollision( CheckingRect ) )
+            if( m_MapVc.at( i + j )->checkCollision( CheckingRect, isShell ) )
             {
                 return true;
             }
@@ -375,4 +406,22 @@ void Map::destroy( const SDL_Rect &CheckingRect, const SDL_Rect &DestroyingRect,
             }
         }
     }
+}
+
+void Map::clear()
+{
+    std::for_each( m_MapVc.begin(), m_MapVc.end(), [] ( pSharedMapObject &pMapObject )
+    {
+        pMapObject->clear();
+    });
+}
+
+void Map::resetCurrentMapIndex()
+{
+    m_nCurrentMapIndex = 0;
+}
+
+bool Map::isMapsStillPresent()
+{
+    return ( m_nCurrentMapIndex + 1 < m_MapsPathsVc.size() );
 }

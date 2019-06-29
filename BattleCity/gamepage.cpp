@@ -7,11 +7,11 @@
 
 
 GamePage::GamePage( InitContainers &&objContainers , pSharedGameEngine &&pGameEngine, State *pState, Renderer renderer ):
-    Page( std::move( objContainers ) ), m_pGameEngine( std::move( pGameEngine ) ), m_Renderer( renderer ),
+    Page( std::move( objContainers ) ), m_pState( pState ), m_pGameEngine( std::move( pGameEngine ) ), m_Renderer( renderer ),
     m_CurrentState( CurrentState::START_PAGE )
 {
     m_pMap->loadMap();
-    m_pGameEngine->attachGlobalGameState( pState );
+    m_pGameEngine->attachGamePage( this );
     initButtons( pState );
 }
 
@@ -34,6 +34,14 @@ void GamePage::initButtons( State *pState )
 
         m_ButtonVc.at( static_cast <size_t> ( Buttons::SET_START_PAGE_STATE ))->setAction( [pState, this] ()
         {
+            if( m_pGameEngine->isGameOn() )
+            {
+                pState->lockPlayersQuantity();
+            }
+            else
+            {
+                pState->unlockPlayersQuantity();
+            }
             pState->changeState( CurrentState::START_PAGE );
             m_CurrentState = CurrentState::START_PAGE;
         });
@@ -67,17 +75,41 @@ void GamePage::render()
     if( m_CurrentState != CurrentState::GAME )
     {
         m_CurrentState = CurrentState::GAME;
-        m_pGameEngine->updateNumOfPlayers();
+        m_pGameEngine->gameStartInit();
+        m_AudioChunk.play();
         resize();
     }
     Page::render();
+    m_pMap->renderLowerLayer();
     m_pGameEngine->gameAction();
     renderMapBorder();
     m_pGameEngine->render();
+    m_pMap->renderUpperLayer();
+
+    if( m_PauseKey.keyClick() )
+    {
+        m_pGameEngine->setStartOrPause();
+    }
 }
 
 void GamePage::renderMapBorder()
 {
     SDL_SetRenderDrawColor( m_Renderer, Map::GREY.r, Map::GREY.g, Map::GREY.b, Map::GREY.a );
     SDL_RenderDrawRect( m_Renderer, &m_MapBordersRect );
+}
+
+void GamePage::changeState( CurrentState State )
+{
+    m_CurrentState = State;
+    m_pState->changeState( State );
+}
+
+void GamePage::playStartSound()
+{
+    m_AudioChunk.play();
+}
+
+NumOfPlayers GamePage::getNumOfPlayers()
+{
+    return m_pState->getNumOfPlayers();
 }

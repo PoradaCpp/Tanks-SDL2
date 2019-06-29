@@ -4,8 +4,15 @@
 
 const RelativeRect PlayersHeart::RELATIVE_SOLID_POS = { 0, 0, 69, 58 };
 
-PlayersHeart::PlayersHeart( AnimationInitData AnimInitData , Renderer renderer ): m_HeartAnim( AnimInitData, renderer ),
-    m_AnimCurPos({ 0, 0, 0, 0 }), m_RealSizeRect({ 0, 0, 0, 0 }), m_fDestroying( false ), m_fDestroyed( false )
+PlayersHeart::PlayersHeart( AnimationInitData AnimInitData, std::string sAudioChunkPath, Renderer renderer ):
+    m_HeartAnim( AnimInitData, renderer ), m_AudioChunk( sAudioChunkPath )
+{
+    calcNewSize();
+    m_HeartAnim.startAnimation( NOLMAL_HEART_STATE_ANIM_BEG, NOLMAL_HEART_STATE_ANIM_END );
+}
+
+PlayersHeart::PlayersHeart( PlayersHeartInitData InitData ): m_HeartAnim( InitData.m_AnimInitData, InitData.m_Renderer ),
+    m_AudioChunk( InitData.m_sAudioChunkPath )
 {
     calcNewSize();
     m_HeartAnim.startAnimation( NOLMAL_HEART_STATE_ANIM_BEG, NOLMAL_HEART_STATE_ANIM_END );
@@ -41,10 +48,19 @@ void PlayersHeart::resize()
     calcNewSize();
 }
 
+void PlayersHeart::init()
+{
+    m_fDestroying = false;
+    m_fDestroyed  = false;
+    calcNewSize();
+    m_HeartAnim.startAnimation( NOLMAL_HEART_STATE_ANIM_BEG, NOLMAL_HEART_STATE_ANIM_END );
+}
+
 void PlayersHeart::destroy()
 {
     m_HeartAnim.stopAnimation();
     m_fDestroying = true;
+    m_AudioChunk.play();
 }
 
 bool PlayersHeart::isDestroying()

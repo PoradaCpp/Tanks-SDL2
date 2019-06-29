@@ -10,13 +10,14 @@
 /// \brief Tank::COLLISION_INFO
 /// \brief Object with data about real or "solid" part of TAnk
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Tank::Tank( Animation TankMoveAnim, Animation TankExplosionAnim, Animation ShellExplosionAnim, pSharedMap pMap,
-            RelativeRect RelativeBirthPos, GameEngine *pGameEngine, CommonTanksProperties::MoveDirection moveDirection ):
+Tank::Tank( Animation TankMoveAnim, Animation TankExplosionAnim, Animation ShellExplosionAnim, std::vector <AudioChunk> audioVc,
+            pSharedMap pMap, RelativeRect RelativeBirthPos, GameEngine *pGameEngine,
+            CommonTanksProperties::MoveDirection moveDirection ):
     DisplayedObject(), m_TankMoveAnim( TankMoveAnim ), m_TankExplosionAnim( TankExplosionAnim ),
-    m_ShellExplosionAnim( ShellExplosionAnim ), m_pProperties( nullptr), m_pMap( pMap), m_AnimCurPos({ 0, 0, 0, 0 }),
-    m_pRealCurPos( nullptr ), m_RealSizeRectHoriz({ 0, 0, 0, 0 }), m_RealSizeRectVert({ 0, 0, 0, 0 }), m_TankCenter({ 0, 0 }),
-    m_ShellPosition({ 0, 0 }), m_nAnimBegin( 0 ), m_nAnimEnd( 0 ), m_MoveDirection( moveDirection ), m_fMove( false ),
-    m_fBirth( true ), m_fDestroyed( false ), m_nDestroyingTime( 0 ), m_pGameEngine( pGameEngine )
+    m_ShellExplosionAnim( ShellExplosionAnim ), m_AudioVc( audioVc ), m_pProperties( nullptr), m_pMap( pMap),
+    m_AnimCurPos({ 0, 0, 0, 0 }), m_pRealCurPos( nullptr ), m_RealSizeRectHoriz({ 0, 0, 0, 0 }), m_RealSizeRectVert({ 0, 0, 0, 0 }),
+    m_TankCenter({ 0, 0 }), m_ShellPosition({ 0, 0 }), m_nAnimBegin( 0 ), m_nAnimEnd( 0 ), m_MoveDirection( moveDirection ),
+    m_fMove( false ), m_fBirth( true ), m_fDestroyed( false ), m_nDestroyingTime( 0 ), m_pGameEngine( pGameEngine )
 {
     m_TankMoveAnim.setRelativeDestination( RelativeBirthPos );
     m_AnimCurPos = m_TankMoveAnim.getDestination();
@@ -207,6 +208,12 @@ bool Tank::alignmentAfterResize (SDL_Rect &PossiblePos)
 
 bool Tank::checkNewPosition( SDL_Rect &NewPos )
 {
+    if( !m_fMove && CommonTanksProperties::TankOwnerIdentity::ENEMY != m_pProperties->m_TankOwnerIdentity )
+    {
+        m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::ENGINE_WORK ) ).stop();
+        m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::MOVE ) ).play( AudioChunk::INFINITELY_PLAYING );
+    }
+
     m_fMove = true;
     bool fLooseMove = false;
     m_TankMoveAnim.startAnimation( m_nAnimBegin, m_nAnimEnd );
@@ -260,6 +267,11 @@ bool Tank::newPositionProcessing()
     }
     else
     {
+        if( m_fMove && CommonTanksProperties::TankOwnerIdentity::ENEMY != m_pProperties->m_TankOwnerIdentity )
+        {
+            m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::MOVE ) ).stop();
+            m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::ENGINE_WORK ) ).play( AudioChunk::INFINITELY_PLAYING );
+        }
         m_fMove = false;
         m_TankMoveAnim.stopAnimation();
     }
@@ -303,6 +315,13 @@ void Tank::tankExplosing()
     {
         m_nDestroyingTime = SDL_GetTicks();
 
+        if( CommonTanksProperties::TankOwnerIdentity::ENEMY != m_pProperties->m_TankOwnerIdentity )
+        {
+            m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::MOVE ) ).stop();
+            m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::ENGINE_WORK ) ).stop();
+        }
+        m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::TANK_EXPLOSION ) ).play();
+
         SDL_Rect ExplosionRect = m_AnimCurPos;
         ExplosionRect.w = lround( m_AnimCurPos.w * 100.0 / CommonTanksProperties::SHELL_SIZE_SCALE );
         ExplosionRect.h = lround( m_AnimCurPos.h * 100.0 / CommonTanksProperties::SHELL_SIZE_SCALE );
@@ -329,6 +348,7 @@ void Tank::changeSize()
     }
 
     countRealTankSize();
+    calcShellPosition();
     m_pProperties->m_pMoveAlgorithm->setDisplayWidth( static_cast <uint32_t> ( m_TankMoveAnim.getPageWidth() ) );
 }
 
@@ -368,6 +388,7 @@ void Tank::changePosition()
     }
     else
     {
+        m_fBirth = false;
         tankExplosing();
     }
 }
@@ -383,7 +404,9 @@ pSharedTankShell Tank::tankShot()
         else if( SDL_GetTicks() - m_nShotTime >= ( m_pProperties->m_nShootPause ) )
         {
             m_nShotTime = 0;
-            auto Shell = std::make_shared <TankShell> ( m_ShellExplosionAnim, m_pProperties->m_RelativeTankShellPos, m_MoveDirection,
+            auto Shell = std::make_shared <TankShell> ( m_ShellExplosionAnim,
+                                                        m_AudioVc.at( static_cast<size_t> ( TankProperties::Sounds::SHELL_EXPLOSION )),
+                                                        m_pProperties->m_RelativeTankShellPos, m_MoveDirection,
                                                         m_pProperties->m_TankOwnerIdentity,
                                                         m_pProperties->m_dRelativeXDestroyingForce );
 
@@ -392,7 +415,6 @@ pSharedTankShell Tank::tankShot()
             return Shell;
         }
     }
-
     return pSharedTankShell();
 }
 
@@ -406,6 +428,17 @@ bool Tank::isDestroyed()
     return m_fDestroyed;
 }
 
+bool Tank::isBonus()
+{
+    if( m_pProperties->m_fBonus )
+    {
+        m_pProperties->m_fBonus = false;
+
+        return true;
+    }
+    return false;
+}
+
 bool Tank::checkTankShellCollision( const SDL_Rect &Rect, CommonTanksProperties::TankOwnerIdentity tankOwnerIdentity )
 {
     if( ( SDL_HasIntersection( &Rect, m_pRealCurPos ) ) && (( m_pProperties->m_TankOwnerIdentity != tankOwnerIdentity ) &&
@@ -414,7 +447,7 @@ bool Tank::checkTankShellCollision( const SDL_Rect &Rect, CommonTanksProperties:
     {
         if( m_pProperties->m_fBonus )
         {
-            m_pProperties->m_fBonus = false;
+            //m_pProperties->m_fBonus = false; // It will be executed in "isBonus()" method
         }
         else if( m_pProperties->m_nNumberOfLives )
         {
@@ -434,6 +467,13 @@ bool Tank::checkTankCollision( const SDL_Rect &Rect )
             return true;
         }
     }
+
+    SDL_Rect HeartRect = m_pGameEngine->m_PlayersHeart.getCollisionRect();
+
+    if( SDL_HasIntersection( &Rect, &HeartRect ) && !m_pGameEngine->m_PlayersHeart.isDestroyed() )
+    {
+        return true;
+    }
     return false;
 }
 
@@ -447,4 +487,13 @@ void Tank::setRelativeDestination( RelativeRect RelativeDestRect, RelativeRect R
     m_TankMoveAnim.setRelativeDestination( RelativeDestRect, RelativeBaseRect );
 }
 
-
+void Tank::stopMove()
+{
+    m_fMove = false;
+    if( CommonTanksProperties::TankOwnerIdentity::ENEMY != m_pProperties->m_TankOwnerIdentity )
+    {
+        m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::MOVE ) ).stop();
+        m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::ENGINE_WORK ) ).stop();
+    }
+    m_TankMoveAnim.stopAnimation();
+}

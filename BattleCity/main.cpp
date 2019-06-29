@@ -26,9 +26,9 @@ int main()
         CreateMapPageInitData createMapPageInitData( window.getRenderer() );
         GamePageInitData      gamePageInitData     ( window.getRenderer() );
 
-        window.attachPage( std::make_shared < StartPage >     ( startPageInitData,     &MainState                       ));
-        window.attachPage( std::make_shared < CreateMapPage > ( createMapPageInitData, &MainState, window.getRenderer() ));
-        window.attachPage( std::make_shared < GamePage >      ( gamePageInitData, gamePageInitData, &MainState, window.getRenderer() ));
+        window.attachPage( std::make_shared <StartPage>     ( startPageInitData,     &MainState                       ));
+        window.attachPage( std::make_shared <CreateMapPage> ( createMapPageInitData, &MainState, window.getRenderer() ));
+        window.attachPage( std::make_shared <GamePage>      ( gamePageInitData, gamePageInitData, &MainState, window.getRenderer() ));
         MainState.attachWindow( window );
     }
 

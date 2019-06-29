@@ -3,20 +3,20 @@
 #include "button.h"
 
 Button::Button( ButtonInitData InitData, Renderer renderer ):
-    DisplayedObject(),
+    ButtonBase(),
     m_ImageTexture( InitData.m_ImgInitData, renderer ),
     m_State( ButtonState::DEFAULT ),
-    m_CursorPos({ 0, 0 })
+    m_CursorPos({ 0, 0 }), m_fLock( false )
 {
     m_DestImgRect = m_ImageTexture.getDestination();
     setRenderDimensions();
 }
 
 Button::Button( ImgTextureInitData InitData, Renderer renderer ):
-    DisplayedObject(),
+    ButtonBase(),
     m_ImageTexture( InitData, renderer ),
     m_State( ButtonState::DEFAULT ),
-    m_CursorPos({ 0, 0 })
+    m_CursorPos({ 0, 0 }), m_fLock( false )
 {
     m_DestImgRect = m_ImageTexture.getDestination();
     setRenderDimensions();
@@ -36,27 +36,6 @@ void Button::setRenderDimensions()
     }
 }
 
-Uint32 Button::inFocus()
-{
-    Uint32 nCurrentButtonState( SDL_GetMouseState( &m_CursorPos.x, &m_CursorPos.y ) );
-
-    if( SDL_PointInRect( &m_CursorPos, &m_DestImgRect ) )
-    {
-        if( m_State != ButtonState::PRESSED )
-        {
-            m_State = ButtonState::IN_FOCUS;
-        }
-
-        return nCurrentButtonState;
-    }
-    else
-    {
-        m_State = ButtonState::DEFAULT;
-
-        return 0;
-    }
-}
-
 ButtonState Button::getState()
 {
     if ( inFocus() & SDL_BUTTON( SDL_BUTTON_LEFT ))
@@ -71,6 +50,25 @@ ButtonState Button::getState()
     return m_State;
 }
 
+Uint32 Button::inFocus()
+{
+    Uint32 nCurrentButtonState( SDL_GetMouseState( &m_CursorPos.x, &m_CursorPos.y ) );
+
+    if( SDL_PointInRect( &m_CursorPos, &m_DestImgRect ) && !m_fLock )
+    {
+        if( m_State != ButtonState::PRESSED )
+        {
+            m_State = ButtonState::IN_FOCUS;
+        }
+        return nCurrentButtonState;
+    }
+    else
+    {
+        m_State = ButtonState::DEFAULT;
+        return 0;
+    }
+}
+
 void Button::setAction( Action action )
 {
     m_Action = action;
@@ -80,16 +78,25 @@ void Button::execute()
 {
     getState();
 
-    if( ButtonState::RELEASED == m_State && m_Action )
+    if( ButtonState::RELEASED == m_State && m_Action && !m_fLock )
     {
         m_Action();
     }
 }
 
+void Button::lock()
+{
+    m_fLock = true;
+}
+
+void Button::unlock()
+{
+    m_fLock = false;
+}
+
 void Button::changeSize()
 {
     m_ImageTexture.changeSize();
-
     m_DestImgRect = m_ImageTexture.getDestination();
 }
 

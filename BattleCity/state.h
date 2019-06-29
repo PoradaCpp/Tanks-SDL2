@@ -23,11 +23,16 @@ public:
     void changeState( CurrentState State );
     CurrentState getState();
     NumOfPlayers getNumOfPlayers();
+    void setPlayersQuantity( NumOfPlayers numOfPlayers );
+    void lockPlayersQuantity();
+    void unlockPlayersQuantity();
+    bool isPlayersQuantityLocked();
 
 private:
     CurrentState m_State;
     MainWindow m_Window;
     NumOfPlayers m_NumOfPlayers;
+    bool m_fLockPlayersQuantity;
 };
 
 #endif // MAINSTATE_H

@@ -22,11 +22,9 @@ private:
     static const RelativeRect HALF_DOWN_SIZE;
     static const RelativeRect QUARTER_DOWN_RIGHT_SIZE;
     static const RelativeRect QUARTER_DOWN_LEFT_SIZE;
-    static const RelativeRect QUARTER_UPPER_RIGHT_SIZE;
-    static const RelativeRect QUARTER_UPPER_LEFT_SIZE;
     static const RelativeRect EMPTY;
 
-    std::array <const RelativeRect*, 20> m_SizeCoeffArr;
+    std::array <const RelativeRect*, 16> m_SizeCoeffArr;
 };
 
 class Map;
@@ -35,6 +33,12 @@ class MapObject
 {
 public:
     friend class Map;
+
+    enum class DisplayingLayer
+    {
+        UPPER_LAYER,
+        LOWER_LAYER
+    };
 
     MapObject( Texture texture, Renderer renderer );
     ~MapObject();
@@ -50,11 +54,15 @@ public:
     RelativeRect getRelativeBase() const;
 
     void changeSize();
-    void renderTexture( SDL_Rect SourceRect );
+    void render (SDL_Rect SourceRect );
+    void renderLowerLayer( SDL_Rect SourceRect );
+    void renderUpperLayer( SDL_Rect SourceRect );
     void renderFillRect();
-    bool checkCollision( const SDL_Rect &CheckingRect );
+    bool checkCollision( const SDL_Rect &CheckingRect, bool isShell = false );
     bool checkCollisionWithLine( SDL_Point Point1, SDL_Point Point2 );
     void destroy( SDL_Rect DestroyingRect, CommonTanksProperties::MoveDirection moveDirection );
+    void clear();
+    DisplayingLayer getDisplayingLayer() const;
 
     static const size_t TILE_DEFAULT_NUMBER = 99;
 
@@ -72,10 +80,16 @@ private:
         FOREST          = 10,
         WATER           = 11,
         ICE             = 12,
-        HEART           = 16,
         EMPTY           = 99,
-        WHITE_SQUARE    = 19,
+        WHITE_SQUARE    = 15,
         SOLID_WALLS_END = 9
+    };
+
+    enum class TileCollisionProperties
+    {
+        FULL_COLLISION,
+        TANK_ONLY_COLLISION,
+        NO_COLLISION
     };
 
     Texture m_Texture;
@@ -86,6 +100,8 @@ private:
     SDL_Rect m_TileRect;
     size_t m_nTileNumber;
     TileType m_TileType;
+    TileCollisionProperties m_TileCollisionProperties;
+    DisplayingLayer m_DisplayingLayer;
 
     void determineTileType();
     void calcTileRealSize();

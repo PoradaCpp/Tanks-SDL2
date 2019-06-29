@@ -18,6 +18,9 @@ public:
     void render() override;
 
     void renderMapBorder();
+    void changeState( CurrentState State );
+    void playStartSound();
+    NumOfPlayers getNumOfPlayers();
 
 private:
     enum class Buttons
@@ -28,10 +31,35 @@ private:
         BUTTONS_QUANTITY     = 3
     };
 
+    class PauseKey
+    {
+    public:
+        bool keyClick()
+        {
+            const Uint8* currentKeyStates = SDL_GetKeyboardState( nullptr );
+
+            if( currentKeyStates[ Key_P ] )
+            {
+                m_fPressed = true;
+            }
+            else if( m_fPressed )
+            {
+                m_fPressed = false;
+                return true;
+            }
+            return false;
+        }
+    private:
+        SDL_Scancode Key_P { SDL_SCANCODE_P };
+        bool m_fPressed { false };
+    };
+
+    State *m_pState;
     pSharedGameEngine m_pGameEngine;
     Renderer m_Renderer;
     CurrentState m_CurrentState;
     SDL_Rect m_MapBordersRect;
+    PauseKey m_PauseKey;
 };
 
 #endif // GAMEPAGE_H

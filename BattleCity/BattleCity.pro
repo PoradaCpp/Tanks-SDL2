@@ -5,8 +5,12 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     animation.cpp \
+    audiochunk.cpp \
+    bonus.cpp \
+    collisionsubject.cpp \
     gameengine.cpp \
     mainwindow.cpp \
+    music.cpp \
     playersheart.cpp \
     random_uint32_t.cpp \
     surface.cpp \
@@ -48,9 +52,14 @@ INCLUDEPATH += C://Users//Workstation//Documents//CPP//mingw_dev_lib//SDL2_mixer
 
 HEADERS += \
     animation.h \
+    audiochunk.h \
+    bonus.h \
+    buttonbase.h \
+    collisionsubject.h \
     dynamicobject.h \
     gameengine.h \
     mainwindow.h \
+    music.h \
     pageinitdata.h \
     playersheart.h \
     random_uint32_t.h \

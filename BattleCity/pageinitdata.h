@@ -8,30 +8,36 @@
 #include "dynamicobject.h"
 #include "buttonnamed.h"
 #include "map.h"
+#include "audiochunk.h"
 
 struct InitContainers
 {
     InitContainers() {}
-    InitContainers( std::vector <pSharedDisplayedObj> DisplayedObjVc, std::vector < pSharedButton > ButtonVc, pSharedMap pMap ):
+    InitContainers( std::vector <pSharedDisplayedObj> DisplayedObjVc, std::vector < pSharedButton > ButtonVc, pSharedMap pMap,
+                    AudioChunk audioChunk ):
         m_DisplayedObjVc( DisplayedObjVc ),
         m_ButtonVc      ( ButtonVc       ),
-        m_pMap          ( pMap           ) {}
+        m_pMap          ( pMap           ),
+        m_AudioChunk    ( audioChunk     ) {}
 
     InitContainers( const InitContainers &rObj  ):
         m_DisplayedObjVc( rObj.m_DisplayedObjVc ),
         m_ButtonVc      ( rObj.m_ButtonVc       ),
-        m_pMap          ( rObj.m_pMap           ) {}
+        m_pMap          ( rObj.m_pMap           ),
+        m_AudioChunk    ( rObj.m_AudioChunk     ) {}
 
     InitContainers( const InitContainers &&rObj ):
-        m_DisplayedObjVc( std::move( rObj.m_DisplayedObjVc  )),
-        m_ButtonVc      ( std::move( rObj.m_ButtonVc        )),
-        m_pMap          ( std::move( rObj.m_pMap            )) {}
+        m_DisplayedObjVc( std::move( rObj.m_DisplayedObjVc )),
+        m_ButtonVc      ( std::move( rObj.m_ButtonVc )      ),
+        m_pMap          ( std::move( rObj.m_pMap )          ),
+        m_AudioChunk    ( std::move( rObj.m_AudioChunk )    ){}
 
     ~InitContainers() {}
 
     std::vector <pSharedDisplayedObj> m_DisplayedObjVc;
     std::vector <pSharedButton>       m_ButtonVc;
     pSharedMap m_pMap;
+    AudioChunk m_AudioChunk;
 };
 
 class PageInitData
@@ -48,6 +54,8 @@ public:
         m_Red_Brown ({ 140,  60,  50, 255 }),
         m_Red       ({ 255,   0,   0, 255 }),
         m_Black     ({   0,   0,   0, 255 }),
+        m_Grey      ({  40,  40,  40, 255 }),
+        m_White     ({ 255, 255, 255, 255 }),
 
         m_Arial    ( "media/fonts/arial.ttf",            70 ),
         m_Calibrib ( "media/fonts/calibrib.ttf",         70 ),
@@ -72,6 +80,8 @@ protected:
     SDL_Color m_Red_Brown;
     SDL_Color m_Red;
     SDL_Color m_Black;
+    SDL_Color m_Grey;
+    SDL_Color m_White;
 
     Font m_Arial;
     Font m_Calibrib;

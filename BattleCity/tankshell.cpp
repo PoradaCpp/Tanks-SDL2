@@ -1,9 +1,10 @@
 #include "tankshell.h"
 
-TankShell::TankShell(Animation ShellExplosionAnim, RelativeRect RelativePos, CommonTanksProperties::MoveDirection moveDirection,
-                      CommonTanksProperties::TankOwnerIdentity tankOwnerIdentity, double dRelativeXDestroyingForce ):
-    m_ShellAnim( ShellExplosionAnim ), m_CurPos({ 0, 0, 0, 0 }), m_CollisionSize({ 0, 0, 0, 0 }),
-    m_HorizShellDestroyingVolume({ 0, 0, 0, 0 }), m_VertShellDestroyingVolume({ 0, 0, 0, 0 }),
+TankShell::TankShell( Animation ShellExplosionAnim, AudioChunk shellExplosionSound, RelativeRect RelativePos,
+                      CommonTanksProperties::MoveDirection moveDirection, CommonTanksProperties::TankOwnerIdentity tankOwnerIdentity,
+                      double dRelativeXDestroyingForce ):
+    m_ShellAnim( ShellExplosionAnim ), m_ExplosionSound( shellExplosionSound ), m_CurPos({ 0, 0, 0, 0 }),
+    m_CollisionSize({ 0, 0, 0, 0 }), m_HorizShellDestroyingVolume({ 0, 0, 0, 0 }), m_VertShellDestroyingVolume({ 0, 0, 0, 0 }),
     m_dRelativeXDestroyingForce( dRelativeXDestroyingForce ), m_MoveDirection( moveDirection ),
     m_TankOwnerIdentity( tankOwnerIdentity), m_fExplosion( false ), m_fExplosed( false )
 {
@@ -54,6 +55,10 @@ void TankShell::setExplosion()
     if( !m_fExplosion )
     {
         m_fExplosion = true;
+        if(CommonTanksProperties::TankOwnerIdentity::ENEMY != m_TankOwnerIdentity )
+        {
+            m_ExplosionSound.play();
+        }
         int nWidth  = lround( m_CurPos.w * 100 / CommonTanksProperties::TANK_SHELL_SCALE );
         int nHeight = lround( m_CurPos.h * 100 / CommonTanksProperties::TANK_SHELL_SCALE );
         m_CurPos.x += ( m_CurPos.w - nWidth ) / 2;

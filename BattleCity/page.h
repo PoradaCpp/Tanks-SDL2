@@ -18,8 +18,9 @@ public:
     Page() {}
     Page( InitContainers &&objContainers ):
           m_DisplayedObjVc( std::move( objContainers.m_DisplayedObjVc )),
-          m_ButtonVc       ( std::move( objContainers.m_ButtonVc       )),
-          m_pMap           ( std::move( objContainers.m_pMap           ))
+          m_ButtonVc      ( std::move( objContainers.m_ButtonVc       )),
+          m_pMap          ( std::move( objContainers.m_pMap           )),
+          m_AudioChunk    ( std::move( objContainers.m_AudioChunk     ))
     {}
 
     virtual ~Page() {}
@@ -68,6 +69,7 @@ protected:
     std::vector <pSharedButton>        m_ButtonVc;
     std::vector <pSharedDynObj>        m_DynObjVc;
     pSharedMap m_pMap;
+    AudioChunk m_AudioChunk;
 };
 
 #endif // PAGE_H

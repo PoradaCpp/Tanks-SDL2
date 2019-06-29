@@ -17,7 +17,7 @@ GamePageInitData::GamePageInitData( Renderer renderer ):
     ({
          { "media/images/tanks/tank_icon_green.png",    { 86.5, 50.0, 3.4, 3.1 }, { 1.2, 2.1, 99, 95.4 }},
          { "media/images/tanks/tank_icon_yellow.png",   { 86.5, 65.2, 3.4, 3.1 }, { 1.2, 2.1, 99, 95.4 }},
-         { "media/images/tanks/tank_icon_dark_red.png", { 90.5, 39.8, 3.4, 3.1 }, { 1.2, 2.1, 99, 95.4 }},
+         { "media/images/tanks/tank_icon_dark_red.png", { 94.5, 39.8, 3.4, 3.1 }, { 1.2, 2.1, 99, 95.4 }},
          { "media/images/tanks/tank_icon_red.png",      { 86.5, 10.4, 3.4, 3.1 }, { 1.2, 2.1, 99, 95.4 }}
      }),
 
@@ -48,12 +48,19 @@ GamePageInitData::GamePageInitData( Renderer renderer ):
         {{ "media/images/tanks/bomb_explosion_animation.png", { 0, 0, 0, 0 }, { 1.3, 2.3, 81.2, 93.6 } }, 4, 12 },
      }),
 
-     m_HeartAnimInitData({ "media/images/heart_anim.png", { 39, 86, 5.7, 10 }, { 1.3, 2.3, 81.2, 93.6 } }, 4, 6, 12 )
+     m_HeartAnimInitData({ "media/images/heart_anim.png", { 39, 86, 5.7, 10 }, { 1.3, 2.3, 81.2, 93.6 } }, 4, 8, 9 ),
+
+     m_GameOverTextInitData({ m_BaltExtB, "GAME OVER", m_White, m_Grey, 120, 150, -5, -5, { 16.3, 33, 50, 30 } }),
+
+     m_AudioChunkPath( "media/audio/level_start.wav" ),
+     m_HeartBreakAudioChunkPath( "media/audio/players_heart_breaking.wav" ),
+     m_BonusImgData( "media/images/bonuses.png", { 0, 0, 5.7, 10 } )
+
 {
     init();
 }
 
-GamePageInitData::GamePageInitData( std::vector < ImgTextureInitData > &&ImgTextureInitVc1,
+GamePageInitData::GamePageInitData( std::vector <ImgTextureInitData> &&ImgTextureInitVc1,
                                     std::vector <ImgTextureInitData> &&ImgTextureInitVc2,
                                     std::vector <Text3DInitData> &&Text3DInitVc,
                                     std::vector <ButtonInitData> &&ButtonInitVc,
@@ -61,17 +68,25 @@ GamePageInitData::GamePageInitData( std::vector < ImgTextureInitData > &&ImgText
                                     MapInitData mapInitData,
                                     std::vector<AnimationInitData> AnimationInitDataVc,
                                     AnimationInitData HeartAnimInitData,
+                                    Text3DInitData GameOverTextInitData,
+                                    std::string audioChunkPath,
+                                    std::string heartBreakAudioChunkPath,
+                                    ImgTextureInitData bonusImgData,
                                     Renderer renderer ):
 
-    PageInitData         ( renderer                      ),
-    m_ImgInitVc1         ( std::move( ImgTextureInitVc1 )),
-    m_ImgInitVc2         ( std::move( ImgTextureInitVc2 )),
-    m_Tex3DInitVc        ( std::move( Text3DInitVc      )),
-    m_ButtonInitVc       ( std::move( ButtonInitVc      )),
-    m_ButtonNamedInitVc  ( std::move( ButtonNamedInitVc )),
-    m_MapInitData        ( mapInitData                   ),
-    m_AnimationInitDataVc( AnimationInitDataVc           ),
-    m_HeartAnimInitData  ( HeartAnimInitData             )
+    PageInitData              ( renderer                      ),
+    m_ImgInitVc1              ( std::move( ImgTextureInitVc1 )),
+    m_ImgInitVc2              ( std::move( ImgTextureInitVc2 )),
+    m_Tex3DInitVc             ( std::move( Text3DInitVc      )),
+    m_ButtonInitVc            ( std::move( ButtonInitVc      )),
+    m_ButtonNamedInitVc       ( std::move( ButtonNamedInitVc )),
+    m_MapInitData             ( mapInitData                   ),
+    m_AnimationInitDataVc     ( AnimationInitDataVc           ),
+    m_HeartAnimInitData       ( HeartAnimInitData             ),
+    m_GameOverTextInitData    ( GameOverTextInitData          ),
+    m_AudioChunkPath          ( audioChunkPath                ),
+    m_HeartBreakAudioChunkPath( heartBreakAudioChunkPath      ),
+    m_BonusImgData            ( bonusImgData                  )
 {
     init();
 }
@@ -109,11 +124,10 @@ void GamePageInitData::init()
         m_InitContainers.m_ButtonVc.push_back( ptr );
     });
 
+    m_InitContainers.m_AudioChunk.createAudio( m_AudioChunkPath );
     m_InitContainers.m_pMap = std::make_shared <Map> ( m_MapInitData, m_Renderer );
-    m_InitContainers.m_DisplayedObjVc.push_back( m_InitContainers.m_pMap );
-
-    m_pGameEngine = std::make_shared <GameEngine> ( m_AnimationInitDataVc, m_ImgInitVc2, m_HeartAnimInitData, m_Renderer,
-                                                    m_InitContainers.m_pMap );
+    m_pGameEngine = std::make_shared <GameEngine> ( m_AnimationInitDataVc, m_ImgInitVc2, m_GameOverTextInitData, m_HeartAnimInitData,
+                                                    m_BonusImgData, m_HeartBreakAudioChunkPath, m_Renderer, m_InitContainers.m_pMap );
 }
 
 GamePageInitData::operator pSharedGameEngine && ()

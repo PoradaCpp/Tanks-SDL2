@@ -3,12 +3,17 @@
 #include "tankofplayer.h"
 #include "tankshell.h"
 
-TankOfPlayer::TankOfPlayer(Animation TankMoveAnim, Animation TankExplosionAnim, Animation BombExplosionAnim, pSharedMap pMap,
-                            RelativeRect RelativeBirthPos, GameEngine *pGameEngine, CommonTanksProperties::MoveDirection moveDirection ):
-    Tank( TankMoveAnim, TankExplosionAnim, BombExplosionAnim, pMap, RelativeBirthPos, pGameEngine, moveDirection ),
+TankOfPlayer::TankOfPlayer( Animation TankMoveAnim, Animation TankExplosionAnim, Animation BombExplosionAnim,
+                            std::vector<AudioChunk> audioVc, pSharedMap pMap, RelativeRect RelativeBirthPos, GameEngine *pGameEngine,
+                            CommonTanksProperties::MoveDirection moveDirection ):
+    Tank( TankMoveAnim, TankExplosionAnim, BombExplosionAnim, audioVc, pMap, RelativeBirthPos, pGameEngine, moveDirection ),
     m_TankDefenseAnim( TankMoveAnim ), m_DefenseRelativeRect( 0, 0, 0, 0 ), m_nDefenseTime( 0 ), m_fDefense( true ) {}
 
-TankOfPlayer::~TankOfPlayer() {}
+TankOfPlayer::~TankOfPlayer()
+{
+    m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::MOVE ) ).stop();
+    m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::ENGINE_WORK ) ).stop();
+}
 
 void TankOfPlayer::changeSize()
 {
@@ -26,7 +31,7 @@ void TankOfPlayer::render()
         {
             m_nDefenseTime = SDL_GetTicks();
         }
-        else if( SDL_GetTicks() - m_nDefenseTime <= DEFENSE_ON_TIME )
+        else if( SDL_GetTicks() - m_nDefenseTime <= DEFENSE_ON_TIME && m_pProperties->m_nNumberOfLives)
         {
             m_TankDefenseAnim.startAnimation( m_pProperties->m_nDefenseAnimTilesBegin, m_pProperties->m_nDefenseAnimTilesEnd );
             m_TankDefenseAnim.render( static_cast <double> ( m_MoveDirection ) );
@@ -51,6 +56,7 @@ void TankOfPlayer::attachProperties( pSharedTankProperties pProperties )
     m_DefenseRelativeRect.m_dHeight = dHeight;
 
     m_TankDefenseAnim.setRelativeDestination( m_DefenseRelativeRect );
+    m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::ENGINE_WORK ) ).play( AudioChunk::INFINITELY_PLAYING );
 }
 
 void TankOfPlayer::changePosition()
@@ -73,8 +79,11 @@ pSharedTankShell TankOfPlayer::tankShot()
             }
             else if( currentKeyStates[ m_pProperties->Shot ] && SDL_GetTicks() - m_nShotTime >= ( m_pProperties->m_nShootPause ) )
             {
+                m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::SHOT ) ).play();
                 m_nShotTime = 0;
-                auto Shell = std::make_shared <TankShell> ( m_ShellExplosionAnim, m_pProperties->m_RelativeTankShellPos,
+                auto Shell = std::make_shared <TankShell> ( m_ShellExplosionAnim,
+                                                            m_AudioVc.at( static_cast<size_t> ( TankProperties::Sounds::SHELL_EXPLOSION )),
+                                                            m_pProperties->m_RelativeTankShellPos,
                                                             m_MoveDirection, m_pProperties->m_TankOwnerIdentity,
                                                             m_pProperties->m_dRelativeXDestroyingForce );
 

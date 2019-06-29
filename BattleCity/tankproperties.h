@@ -4,6 +4,7 @@
 #include <array>
 
 #include "animation.h"
+#include "audiochunk.h"
 #include "movealgorithm.h"
 #include "random_uint32_t.h"
 
@@ -107,6 +108,24 @@ namespace CommonTanksProperties
     const uint32_t PLAYER_QUICK_SHOT_PAUSE    = 500;
 
     const uint32_t DESTROYING_PAUSE    = 400;
+
+    const std::array <std::string, 5> PLAYERS_TANK_SOUNDS_PATHS
+    ({
+         "media/audio/players_engine_work.wav",     // Player's engine work sound
+         "media/audio/players_tank_move.wav",       // Player's tank move sound
+         "media/audio/players_tank_shot.wav",       // Player's tank shot sound
+         "media/audio/players_shell_explosion.wav", // Player's shell explosion sound
+         "media/audio/players_tank_explosion.wav"   // Player's tank explosion sound
+     });
+
+    const std::array <std::string, 5> ENEMY_TANK_SOUNDS_PATHS
+    ({
+         "media/audio/enemy_engine_work.wav",       // Enemy engine work sound
+         "media/audio/enemy_tank_move.wav",         // Enemy tank move sound
+         "media/audio/enemy_tank_shot.wav",         // Enemy tank shot sound
+         "media/audio/enemy_shell_explosion.wav",   // Enemy shell explosion sound
+         "media/audio/enemy_tank_explosion.wav"     // Enemy tank explosion sound
+     });
 };
 
 class TankKeyboardMoveAlgo: public MoveAlgorithm
@@ -178,6 +197,16 @@ public:
     virtual void initAsHeavyTank()        = 0;
 
 protected:
+    enum class Sounds
+    {
+        ENGINE_WORK     = 0,
+        MOVE            = 1,
+        SHOT            = 2,
+        SHELL_EXPLOSION = 3,
+        TANK_EXPLOSION  = 4,
+        SOUNDS_QUANTITY = 5
+    };
+
     CommonTanksProperties::TankType m_TankType;
     CommonTanksProperties::TankOwnerIdentity m_TankOwnerIdentity;
     pSharedMoveAlgo m_pMoveAlgorithm;
@@ -195,7 +224,7 @@ protected:
     size_t m_nAnimTilesEnd;
     uint32_t m_nShootPause;
     SDL_Scancode Shot;
-    bool m_fBonus;
+    bool m_fBonus = false;
 };
 
 typedef std::shared_ptr <TankProperties> pSharedTankProperties;

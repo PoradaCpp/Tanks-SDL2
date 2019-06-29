@@ -220,7 +220,7 @@ void PlayersTankProperties::initAsHeavyTank()
 /// \brief EnemyTankProperties::EnemyTankProperties
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 EnemyTankProperties::EnemyTankProperties( CommonTanksProperties::TankType EnemyTankType, bool fBonus ): TankProperties()
-{
+{    
     m_TankType                 = EnemyTankType;
     m_TankOwnerIdentity        = CommonTanksProperties::TankOwnerIdentity::ENEMY;
     m_pMoveAlgorithm           = std::make_shared <TankRandomMoveAlgo> ( EnemyTankType );

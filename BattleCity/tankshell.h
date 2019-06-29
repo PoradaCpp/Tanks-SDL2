@@ -8,8 +8,9 @@
 class TankShell
 {
 public:
-    TankShell( Animation ShellExplosionAnim, RelativeRect RelativePos, CommonTanksProperties::MoveDirection moveDirection,
-               CommonTanksProperties::TankOwnerIdentity tankOwnerIdentity, double dRelativeXDestroyingForce );
+    TankShell( Animation ShellExplosionAnim, AudioChunk shellExplosionSound, RelativeRect RelativePos,
+               CommonTanksProperties::MoveDirection moveDirection, CommonTanksProperties::TankOwnerIdentity tankOwnerIdentity,
+               double dRelativeXDestroyingForce );
     ~TankShell();
 
     void changeSize();
@@ -28,6 +29,7 @@ public:
 
 private:
     Animation m_ShellAnim;
+    AudioChunk m_ExplosionSound;
     SDL_Rect m_CurPos;
     SDL_Rect m_CollisionSize;
     SDL_Rect m_HorizShellDestroyingVolume;

@@ -6,8 +6,8 @@
 class TankOfEnemy: public Tank
 {
 public:
-    TankOfEnemy( Animation TankMoveAnim, Animation TankExplosionAnim, Animation BombExplosionAnim, pSharedMap pMap,
-                 RelativeRect RelativeBirthPos, GameEngine *pGameEngine,
+    TankOfEnemy( Animation TankMoveAnim, Animation TankExplosionAnim, Animation BombExplosionAnim, std::vector <AudioChunk> audioVc,
+                 pSharedMap pMap, RelativeRect RelativeBirthPos, GameEngine *pGameEngine,
                  CommonTanksProperties::MoveDirection moveDirection = CommonTanksProperties::MoveDirection::UP );
     ~TankOfEnemy() override;
 

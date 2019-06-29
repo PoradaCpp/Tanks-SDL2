@@ -3,9 +3,10 @@
 #include "tankofenemy.h"
 #include "tankshell.h"
 
-TankOfEnemy::TankOfEnemy(Animation TankMoveAnim, Animation TankExplosionAnim, Animation BombExplosionAnim, pSharedMap pMap,
-                            RelativeRect RelativeBirthPos, GameEngine *pGameEngine, CommonTanksProperties::MoveDirection moveDirection ):
-    Tank( TankMoveAnim, TankExplosionAnim, BombExplosionAnim, pMap, RelativeBirthPos, pGameEngine, moveDirection ),
+TankOfEnemy::TankOfEnemy( Animation TankMoveAnim, Animation TankExplosionAnim, Animation BombExplosionAnim,
+                          std::vector<AudioChunk> audioVc, pSharedMap pMap, RelativeRect RelativeBirthPos, GameEngine *pGameEngine,
+                          CommonTanksProperties::MoveDirection moveDirection ):
+    Tank( TankMoveAnim, TankExplosionAnim, BombExplosionAnim, audioVc, pMap, RelativeBirthPos, pGameEngine, moveDirection ),
     m_nDeadLockChangeDirectionTime( 0 ) {}
 
 TankOfEnemy::~TankOfEnemy() {}
@@ -20,7 +21,7 @@ void TankOfEnemy::bonusAnimControl()
     else if( CommonTanksProperties::TankType::HEAVY_TANK == m_pProperties->m_TankType )
     {
         m_nAnimBegin = m_pProperties->m_nAnimTilesBegin + CommonTanksProperties::ENEMY_HEAVY_TANK_ANIM_LENGTH *
-                ( CommonTanksProperties::ENEMY_HEAVY_TANKS_LIVES - m_pProperties->m_nNumberOfLives );
+                       ( CommonTanksProperties::ENEMY_HEAVY_TANKS_LIVES - m_pProperties->m_nNumberOfLives );
         m_nAnimEnd = m_nAnimBegin + CommonTanksProperties::ENEMY_HEAVY_TANK_ANIM_LENGTH - 1;
     }
     else
