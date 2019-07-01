@@ -7,12 +7,13 @@ SOURCES += main.cpp \
     animation.cpp \
     audiochunk.cpp \
     bonus.cpp \
-    collisionsubject.cpp \
     gameengine.cpp \
     mainwindow.cpp \
     music.cpp \
+    objectsmanagement.cpp \
     playersheart.cpp \
     random_uint32_t.cpp \
+    scorescounting.cpp \
     surface.cpp \
     startpage.cpp \
     tank.cpp \
@@ -55,14 +56,15 @@ HEADERS += \
     audiochunk.h \
     bonus.h \
     buttonbase.h \
-    collisionsubject.h \
     dynamicobject.h \
     gameengine.h \
     mainwindow.h \
     music.h \
+    objectsmanagement.h \
     pageinitdata.h \
     playersheart.h \
     random_uint32_t.h \
+    scorescounting.h \
     surface.h \
     page.h \
     startpage.h \

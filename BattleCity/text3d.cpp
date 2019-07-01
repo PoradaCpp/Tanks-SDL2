@@ -31,10 +31,10 @@ void Text3D::setBottomTextureAlpha( Uint8 Alpha )
     m_BottomTexture.setAlpha( Alpha );
 }
 
-void Text3D::setTopTextureShift( int dX, int dY )
+void Text3D::setTopTextureShift( int nDx, int nDy )
 {
-    m_nTopTextureShiftX = dX;
-    m_nTopTextureShiftY = dY;
+    m_nTopTextureShiftX = nDx;
+    m_nTopTextureShiftY = nDy;
 }
 
 void Text3D::setRelativeDestination(RelativeRect RelativeDestRect, RelativeRect RelativeBaseRect )
@@ -57,6 +57,16 @@ void Text3D::setDestination( SDL_Rect DestRect )
     rect.y += m_nTopTextureShiftY;
 
     m_TopTexture.setDestination( rect );
+}
+
+void Text3D::setPosition( int nX, int nY )
+{
+    m_BottomTexture.setPosition( nX, nY );
+
+    int x = nX + m_nTopTextureShiftX;
+    int y = nY + m_nTopTextureShiftY;
+
+    m_TopTexture.setPosition( x, y );
 }
 
 void Text3D::changeSize()

@@ -4,9 +4,9 @@
 #include "tankshell.h"
 
 TankOfEnemy::TankOfEnemy( Animation TankMoveAnim, Animation TankExplosionAnim, Animation BombExplosionAnim,
-                          std::vector<AudioChunk> audioVc, pSharedMap pMap, RelativeRect RelativeBirthPos, GameEngine *pGameEngine,
-                          CommonTanksProperties::MoveDirection moveDirection ):
-    Tank( TankMoveAnim, TankExplosionAnim, BombExplosionAnim, audioVc, pMap, RelativeBirthPos, pGameEngine, moveDirection ),
+                          std::vector<AudioChunk> audioVc, pSharedMap pMap, RelativeRect RelativeBirthPos,
+                          std::shared_ptr <ObjectsManagement> pObjectManagement, CommonTanksProperties::MoveDirection moveDirection ):
+    Tank( TankMoveAnim, TankExplosionAnim, BombExplosionAnim, audioVc, pMap, RelativeBirthPos, pObjectManagement, moveDirection ),
     m_nDeadLockChangeDirectionTime( 0 ) {}
 
 TankOfEnemy::~TankOfEnemy() {}

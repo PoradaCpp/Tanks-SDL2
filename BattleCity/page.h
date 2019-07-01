@@ -20,7 +20,7 @@ public:
           m_DisplayedObjVc( std::move( objContainers.m_DisplayedObjVc )),
           m_ButtonVc      ( std::move( objContainers.m_ButtonVc       )),
           m_pMap          ( std::move( objContainers.m_pMap           )),
-          m_AudioChunk    ( std::move( objContainers.m_AudioChunk     ))
+          m_AudioChunk    ( std::move( objContainers.m_PageAudioChunk     ))
     {}
 
     virtual ~Page() {}

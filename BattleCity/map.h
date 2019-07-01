@@ -49,11 +49,28 @@ public:
     void destroy( const SDL_Rect &CheckingRect, const SDL_Rect &DestroyingRect, CommonTanksProperties::MoveDirection moveDirection );
     void clear();
     void resetCurrentMapIndex();
-    bool isMapsStillPresent();
+    bool isMapsStillPresent() const;
+    bool isMapIndexDefault() const;
+    void setBaseGraniteDefense();
+    void resetBaseGraniteDefense();
 
     static const size_t MAP_SIZE    = 504;
     static const size_t ROW_SIZE    = 28;
     static const size_t COLUMN_SIZE = 18;
+
+    static const size_t BASE_TOP_POS1   = 433;
+    static const size_t BASE_TOP_POS2   = 434;
+    static const size_t BASE_LEFT_POS1  = 460;
+    static const size_t BASE_LEFT_POS2  = 488;
+    static const size_t BASE_RIGHT_POS1 = 463;
+    static const size_t BASE_RIGHT_POS2 = 491;
+
+    static const size_t GRANITE_TOP_TILE   = 9;
+    static const size_t GRANITE_LEFT_TILE  = 7;
+    static const size_t GRANITE_RIGHT_TILE = 3;
+    static const size_t BRICK_TOP_TILE     = 8;
+    static const size_t BRICK_LEFT_TILE    = 6;
+    static const size_t BRICK_RIGHT_TILE   = 2;
 
     static constexpr double TILE_WIDTH   = 2.9;
     static constexpr double TILE_HEIGHT  = 5.2;

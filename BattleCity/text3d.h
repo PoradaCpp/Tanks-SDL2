@@ -30,15 +30,15 @@ class Text3D: public DisplayedObject
 {
 public:
     Text3D( Text3DInitData text3DInitData, Renderer renderer );
-
     ~Text3D() override;
 
     void setTopTextureAlpha( Uint8 Alpha );
     void setBottomTextureAlpha( Uint8 Alpha );
-    void setTopTextureShift( int dX, int dY );
+    void setTopTextureShift( int nDx, int nDy );
 
     void setRelativeDestination( RelativeRect RelativeDestRect, RelativeRect RelativeBaseRect = { 0, 0, 0, 0 } );
     void setDestination( SDL_Rect DestRect );
+    void setPosition(int nX, int nY );
 
     void changeSize() override;
     void render() override;
@@ -50,5 +50,7 @@ private:
     int m_nTopTextureShiftX;
     int m_nTopTextureShiftY;
 };
+
+typedef std::shared_ptr <Text3D> pSharedText3D;
 
 #endif // TEXT3D

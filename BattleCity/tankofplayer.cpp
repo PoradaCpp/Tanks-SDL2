@@ -4,10 +4,10 @@
 #include "tankshell.h"
 
 TankOfPlayer::TankOfPlayer( Animation TankMoveAnim, Animation TankExplosionAnim, Animation BombExplosionAnim,
-                            std::vector<AudioChunk> audioVc, pSharedMap pMap, RelativeRect RelativeBirthPos, GameEngine *pGameEngine,
-                            CommonTanksProperties::MoveDirection moveDirection ):
-    Tank( TankMoveAnim, TankExplosionAnim, BombExplosionAnim, audioVc, pMap, RelativeBirthPos, pGameEngine, moveDirection ),
-    m_TankDefenseAnim( TankMoveAnim ), m_DefenseRelativeRect( 0, 0, 0, 0 ), m_nDefenseTime( 0 ), m_fDefense( true ) {}
+                            std::vector<AudioChunk> audioVc, pSharedMap pMap, RelativeRect RelativeBirthPos,
+                            std::shared_ptr<ObjectsManagement> pObjectManagement, CommonTanksProperties::MoveDirection moveDirection ):
+    Tank( TankMoveAnim, TankExplosionAnim, BombExplosionAnim, audioVc, pMap, RelativeBirthPos, pObjectManagement, moveDirection ),
+    m_TankDefenseAnim( TankMoveAnim ) {}
 
 TankOfPlayer::~TankOfPlayer()
 {
@@ -38,6 +38,7 @@ void TankOfPlayer::render()
         }
         else
         {
+            m_nDefenseTime = 0;
             m_fDefense = false;
         }
     }
@@ -65,49 +66,9 @@ void TankOfPlayer::changePosition()
     m_TankDefenseAnim.setPosition( m_RealSizeRectHoriz.x, m_RealSizeRectHoriz.y );
 }
 
-pSharedTankShell TankOfPlayer::tankShot()
+bool TankOfPlayer::shotCondition()
 {
-    if( m_pProperties->m_nNumberOfLives )
-    {
-        if( m_pProperties->m_nNumberOfLives )
-        {
-            const Uint8* currentKeyStates = SDL_GetKeyboardState( nullptr );
+    const Uint8* currentKeyStates = SDL_GetKeyboardState( nullptr );
 
-            if( !m_nShotTime )
-            {
-                m_nShotTime = SDL_GetTicks();
-            }
-            else if( currentKeyStates[ m_pProperties->Shot ] && SDL_GetTicks() - m_nShotTime >= ( m_pProperties->m_nShootPause ) )
-            {
-                m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::SHOT ) ).play();
-                m_nShotTime = 0;
-                auto Shell = std::make_shared <TankShell> ( m_ShellExplosionAnim,
-                                                            m_AudioVc.at( static_cast<size_t> ( TankProperties::Sounds::SHELL_EXPLOSION )),
-                                                            m_pProperties->m_RelativeTankShellPos,
-                                                            m_MoveDirection, m_pProperties->m_TankOwnerIdentity,
-                                                            m_pProperties->m_dRelativeXDestroyingForce );
-
-                Shell->setPosition( m_ShellPosition.x, m_ShellPosition.y );
-
-                return Shell;
-            }
-        }
-    }
-
-    return pSharedTankShell();
-}
-
-bool TankOfPlayer::checkTankShellCollision( const SDL_Rect &Rect, CommonTanksProperties::TankOwnerIdentity tankOwnerIdentity )
-{
-    if( ( SDL_HasIntersection( &Rect, m_pRealCurPos ) ) && (( m_pProperties->m_TankOwnerIdentity != tankOwnerIdentity ) &&
-          (( CommonTanksProperties::TankOwnerIdentity::ENEMY == tankOwnerIdentity ) ||
-           ( CommonTanksProperties::TankOwnerIdentity::ENEMY == m_pProperties->m_TankOwnerIdentity )) ) )
-    {
-        if( !m_fDefense && m_pProperties->m_nNumberOfLives )
-        {
-            --m_pProperties->m_nNumberOfLives;
-        }
-        return true;
-    }
-    return false;
+    return currentKeyStates[ m_pProperties->Shot ];
 }

@@ -65,10 +65,10 @@ public:
     DisplayingLayer getDisplayingLayer() const;
 
     static const size_t TILE_DEFAULT_NUMBER = 99;
-
-private:
     static const RelativeRect DEFAULT_TILE_SIZE;
     static const RelativeRect TILES_BASE_RECT;
+
+private:
     static const size_t TILE_ATOMS_NUMBER = 64;
     static const size_t TILE_ATOMS_IN_DIMENSION = 8;
     static const MapCollisionInfo COLLISION_INFO;

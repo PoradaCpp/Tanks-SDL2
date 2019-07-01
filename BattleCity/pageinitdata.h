@@ -18,26 +18,26 @@ struct InitContainers
         m_DisplayedObjVc( DisplayedObjVc ),
         m_ButtonVc      ( ButtonVc       ),
         m_pMap          ( pMap           ),
-        m_AudioChunk    ( audioChunk     ) {}
+        m_PageAudioChunk( audioChunk     ) {}
 
     InitContainers( const InitContainers &rObj  ):
         m_DisplayedObjVc( rObj.m_DisplayedObjVc ),
         m_ButtonVc      ( rObj.m_ButtonVc       ),
         m_pMap          ( rObj.m_pMap           ),
-        m_AudioChunk    ( rObj.m_AudioChunk     ) {}
+        m_PageAudioChunk( rObj.m_PageAudioChunk     ) {}
 
     InitContainers( const InitContainers &&rObj ):
         m_DisplayedObjVc( std::move( rObj.m_DisplayedObjVc )),
         m_ButtonVc      ( std::move( rObj.m_ButtonVc )      ),
         m_pMap          ( std::move( rObj.m_pMap )          ),
-        m_AudioChunk    ( std::move( rObj.m_AudioChunk )    ){}
+        m_PageAudioChunk( std::move( rObj.m_PageAudioChunk )    ){}
 
     ~InitContainers() {}
 
     std::vector <pSharedDisplayedObj> m_DisplayedObjVc;
     std::vector <pSharedButton>       m_ButtonVc;
     pSharedMap m_pMap;
-    AudioChunk m_AudioChunk;
+    AudioChunk m_PageAudioChunk;
 };
 
 class PageInitData

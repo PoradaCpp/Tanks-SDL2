@@ -14,8 +14,8 @@ public:
     StartPageInitData( Renderer renderer );
 
     StartPageInitData( std::vector <ImgTextureInitData> &&ImgTextureInitVc, std::vector <Text3DInitData> &&Text3DInitVc,
-                       std::vector <ButtonInitData> &&ButtonInitVc, std::string audioChunkPath, TankArrowInitData tankArrowInitData,
-                       Renderer renderer );
+                       std::vector <ButtonInitData> &&ButtonInitVc, std::string sPageAudioChunkPath,
+                       TankArrowInitData tankArrowInitData, Renderer renderer );
 
     ~StartPageInitData() override;
 
@@ -25,7 +25,7 @@ private:
     std::vector <ImgTextureInitData> m_ImgInitVc;
     std::vector <Text3DInitData>     m_Tex3DInitVc;
     std::vector <ButtonInitData>     m_ButtonInitVc;
-    std::string                      m_AudioChunkPath;
+    std::string                      m_sPageAudioChunkPath;
     TankArrowInitData                m_TankArrowInitData;
 };
 

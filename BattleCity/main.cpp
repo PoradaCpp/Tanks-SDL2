@@ -11,9 +11,7 @@
 #include "createmappageinitdata.h"
 #include "gamepageinitdata.h"
 
-#ifdef __MINGW32__
 #undef main        // Prevents SDL from overriding main()
-#endif
 
 int main()
 {

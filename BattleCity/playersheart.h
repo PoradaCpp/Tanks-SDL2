@@ -8,26 +8,25 @@ struct PlayersHeartInitData
 {
     AnimationInitData m_AnimInitData;
     std::string m_sAudioChunkPath;
-    Renderer m_Renderer;
 
-    PlayersHeartInitData( AnimationInitData AnimInitData, std::string sAudioChunkPath, Renderer renderer ):
-        m_AnimInitData( AnimInitData ), m_sAudioChunkPath( sAudioChunkPath ), m_Renderer( renderer ) {}
+    PlayersHeartInitData( AnimationInitData AnimInitData, std::string sAudioChunkPath ):
+        m_AnimInitData( AnimInitData ), m_sAudioChunkPath( sAudioChunkPath ) {}
 };
 
 class PlayersHeart
 {
 public:
     PlayersHeart( AnimationInitData AnimInitData, std::string sAudioChunkPath, Renderer renderer );
-    PlayersHeart( PlayersHeartInitData InitData );
+    PlayersHeart( PlayersHeartInitData InitData, Renderer renderer  );
     ~PlayersHeart();
 
     void render();
     void resize();
     void init();
     void destroy();
-    bool isDestroying();
-    bool isDestroyed();
-    SDL_Rect getCollisionRect();
+    bool isDestroying() const;
+    bool isDestroyed() const;
+    SDL_Rect getCollisionRect() const;
 
 private:
     static const RelativeRect RELATIVE_SOLID_POS;

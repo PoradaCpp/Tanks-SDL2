@@ -11,7 +11,7 @@ PlayersHeart::PlayersHeart( AnimationInitData AnimInitData, std::string sAudioCh
     m_HeartAnim.startAnimation( NOLMAL_HEART_STATE_ANIM_BEG, NOLMAL_HEART_STATE_ANIM_END );
 }
 
-PlayersHeart::PlayersHeart( PlayersHeartInitData InitData ): m_HeartAnim( InitData.m_AnimInitData, InitData.m_Renderer ),
+PlayersHeart::PlayersHeart( PlayersHeartInitData InitData, Renderer renderer ): m_HeartAnim( InitData.m_AnimInitData, renderer ),
     m_AudioChunk( InitData.m_sAudioChunkPath )
 {
     calcNewSize();
@@ -63,17 +63,17 @@ void PlayersHeart::destroy()
     m_AudioChunk.play();
 }
 
-bool PlayersHeart::isDestroying()
+bool PlayersHeart::isDestroying() const
 {
     return m_fDestroying;
 }
 
-bool PlayersHeart::isDestroyed()
+bool PlayersHeart::isDestroyed() const
 {
     return m_fDestroyed;
 }
 
-SDL_Rect PlayersHeart::getCollisionRect()
+SDL_Rect PlayersHeart::getCollisionRect() const
 {
     return m_RealSizeRect;
 }

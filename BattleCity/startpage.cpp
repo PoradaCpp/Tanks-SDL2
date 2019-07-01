@@ -74,6 +74,7 @@ void StartPage::render()
     if( currentKeyStates[ KEY_ENTER_KP ] || currentKeyStates[ KEY_ENTER ] || currentKeyStates[ KEY_SPACE ] )
     {
         m_pState->changeState( CurrentState::GAME );
+        m_AudioChunk.stop();
     }
 
     Page::render();

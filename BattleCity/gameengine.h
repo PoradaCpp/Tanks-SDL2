@@ -11,8 +11,8 @@
 #include "tank.h"
 #include "state.h"
 #include "random_uint32_t.h"
-#include "playersheart.h"
-#include "bonus.h"
+#include "objectsmanagement.h"
+#include "scorescounting.h"
 
 class GamePage;
 
@@ -20,11 +20,11 @@ class GameEngine
 {
 public:
     friend class Tank;
-    friend class CollisionSubject;
+    friend class ObjectsManagement;
 
     GameEngine( std::vector <AnimationInitData> AnimInitDataVc, std::vector <ImgTextureInitData> LivesAndEnemiesInitDataVc,
-                Text3DInitData GameOverTextInitData, AnimationInitData HeartAnimInitData, ImgTextureInitData BonusTextureInitData,
-                std::string sAudioChunkPath, Renderer renderer, pSharedMap pMap );
+                ObjectsManagementInitData objectsManagementInitData, ImgTextureInitData BackgroundTextureInitData,
+                std::vector <Text3DInitData> Text3DVcInitData, Renderer renderer, pSharedMap pMap );
     ~GameEngine();
 
     void attachGamePage( GamePage *pGamePage );
@@ -72,21 +72,20 @@ private:
     static const uint32_t NUM_OF_ENEMIES_ON_MAP_1PLAYER  = 4;
     static const uint32_t NUM_OF_ENEMIES_ON_MAP_2PLAYERS = 6;
     static const uint32_t START_PLAYERS_LIVES            = 5;
+    static const uint32_t MAX_PLAYERS_LIVES              = 6;
     static const uint32_t FIRST_BONUS_TANK_NUMBER        = 3;
     static const uint32_t SECOND_BONUS_TANK_NUMBER       = 10;
     static const uint32_t THIRD_BONUS_TANK_NUMBER        = 17;
     static const uint32_t GAME_OVER_TIMEOUT              = 5000;
-    static const uint32_t GAME_WON_TIMEOUT               = 3000;
+    static const uint32_t GAME_WON_TIMEOUT               = 7000;
     static const size_t   LIVES_COLUMNS_NUMBER           = 3;
     static const size_t   ENEMIES_ROWS_NUMBER            = 7;
     static const size_t   PLAYERS_ROWS_NUMBER            = 2;
 
-    static constexpr double BONUS_BIRTH_BORDER           = 0.25;
-    static constexpr double BONUS_BIRTH_RANGE            = 0.35;
-
     GamePage *m_pGamePage = nullptr;
-    std::list <pSharedTank>  m_TanksList;
-    std::list <pSharedTankShell> m_TankShellsList;
+    pSharedObjectsManagement m_pObjectsManagement;
+    ScoresCounting           m_ScoresCounting;
+
     std::vector <Animation>  m_AnimTextureVc;
     std::vector <Texture>    m_LivesAndEnemiesTextureVc;
     std::vector <AudioChunk> m_PlayersAudioVc;
@@ -95,10 +94,7 @@ private:
     std::vector <SDL_Rect>   m_EnemyImagesPlaceVc;
     std::vector <SDL_Rect>   m_Player1ImagesPlaceVc;
     std::vector <SDL_Rect>   m_Player2ImagesPlaceVc;
-    Text3D       m_GameOverText;
-    Texture      m_BonusesTexture;
-    pSharedBonus m_pBonus;
-    PlayersHeart m_PlayersHeart;
+
     SDL_Rect     m_Player1BirthPlace;
     SDL_Rect     m_Player2BirthPlace;
     Renderer     m_Renderer;
@@ -112,11 +108,14 @@ private:
     uint32_t     m_nPlayer2Lives          = 0;
     bool         m_fPlayer1Alive          = false;
     bool         m_fPlayer2Alive          = false;
+
+    CommonTanksProperties::TankType
+                 m_Pl1DefTankType         = CommonTanksProperties::TankType::ORDINARY_TANK;
+    CommonTanksProperties::TankType
+                 m_Pl2DefTankType         = CommonTanksProperties::TankType::ORDINARY_TANK;
     GameState    m_CurrentState           = GameState::GAME_OFF;
     GameState    m_PreviousState          = GameState::GAME_PAUSED;
     Random_uint32_t m_Rand1_4             = Random_uint32_t( 1, 4 );
-    Random_uint32_t m_Rand0_100           = Random_uint32_t( 0, 100 );
-    Random_uint32_t m_RandBonus           = Random_uint32_t( 0, Bonus::BONUS_QUANTITY - 1 );
 
     SDL_Rect RelativeToBase( const RelativeRect &relativeRect );
     void calcLiveRectSize();
@@ -129,6 +128,9 @@ private:
     void tankShellsManagement();
 
     void tanksDecrease( CommonTanksProperties::TankOwnerIdentity tankOwner );
+    void livesIncrease( CommonTanksProperties::TankOwnerIdentity tankOwner );
+    void setPlayersTankType( CommonTanksProperties::TankOwnerIdentity tankOwner, CommonTanksProperties::TankType tankType );
+    void resetPlayersTankType( CommonTanksProperties::TankOwnerIdentity tankOwner );
 };
 
 typedef std::shared_ptr <GameEngine> pSharedGameEngine;

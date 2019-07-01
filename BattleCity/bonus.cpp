@@ -1,9 +1,11 @@
 #include "bonus.h"
 
-Bonus::Bonus( Texture texture, BonusType bonusType ): m_ImageTexture( texture ), m_BonusType( bonusType )
+Bonus::Bonus( Texture texture, AudioChunk bonusAdd, AudioChunk bonusTaken, BonusType bonusType ): m_ImageTexture( texture ),
+    m_BonusAddAudio( bonusAdd ), m_BonusTakenAudio( bonusTaken ), m_BonusType( bonusType )
 {
     m_DestImgRect = m_ImageTexture.getDestination();
     setRenderDimensions();
+    m_BonusAddAudio.play();
 }
 
 Bonus::~Bonus() {}
@@ -32,10 +34,20 @@ Bonus::BonusType Bonus::getBonusType() const
     return m_BonusType;
 }
 
+SDL_Rect Bonus::getDestination() const
+{
+    return m_ImageTexture.getDestination();
+}
+
 void Bonus::setPosition( int nX, int nY )
 {
     m_ImageTexture.setPosition( nX, nY );
     m_DestImgRect = m_ImageTexture.getDestination();
+}
+
+void Bonus::playTakingSound()
+{
+    m_BonusTakenAudio.play();
 }
 
 void Bonus::changeSize()

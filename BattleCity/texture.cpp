@@ -135,7 +135,7 @@ SDL_Rect Texture::getDestination() const
 
 SDL_Point Texture::getPosition() const
 {
-    SDL_Point TempPoint({ m_DestRect.x, m_DestRect.y });
+    SDL_Point TempPoint = { m_DestRect.x, m_DestRect.y };
     return TempPoint;
 }
 

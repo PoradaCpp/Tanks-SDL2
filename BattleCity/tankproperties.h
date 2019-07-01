@@ -51,18 +51,19 @@ namespace CommonTanksProperties
                                              TANK_SHELL_SCALE );
 
 
-    const RelativeRect ORDINARY_TANK       (  0,  0,  97, 71 );
-    const RelativeRect BTR                 (  0,  0,  97, 55 );
-    const RelativeRect HEAVY_TANK          (  0,  0,  97, 81 );
+    const RelativeRect ORDINARY_TANK ( 0, 0, 97, 71 );
+    const RelativeRect BTR           ( 0, 0, 97, 55 );
+    const RelativeRect HEAVY_TANK    ( 0, 0, 97, 81 );
+    const double QUICK_SHOOTING_BTR_SCALE  = 1.3;
 
 
-    const uint32_t PLAYERS_TANKS_LIVES     = 1;
-    const uint32_t ENEMY_LIGHT_TANKS_LIVES = 1;
-    const uint32_t ENEMY_HEAVY_TANKS_LIVES = 3;
+    const uint32_t PLAYERS_TANKS_LIVES                  = 1;
+    const uint32_t ENEMY_LIGHT_TANKS_LIVES              = 1;
+    const uint32_t ENEMY_HEAVY_TANKS_LIVES              = 3;
 
-    const double ORDINARY_TANK_RELATIVE_SPEED = 0.125;
-    const double BTR_RELATIVE_SPEED           = 0.25;
-    const double SHELL_RELATIVE_SPEED         = 0.5;
+    const double ORDINARY_TANK_RELATIVE_SPEED           = 0.125;
+    const double BTR_RELATIVE_SPEED                     = 0.25;
+    const double SHELL_RELATIVE_SPEED                   = 0.5;
 
     const uint32_t PLAYERS_TANKS_DEFENSE_ANIM_BEGIN     = 100;
     const uint32_t PLAYERS_TANKS_DEFENSE_ANIM_END       = 103;
@@ -102,12 +103,17 @@ namespace CommonTanksProperties
     const uint32_t ENEMY_DIRECTION_CHANGE_MIN_TIMEOUT   = 200;
     const uint32_t ENEMY_DIRECTION_CHANGE_MAX_TIMEOUT   = 800;
 
-    const uint32_t ENEMY_ORDINARY_SHOT_PAUSE  = 1000;
-    const uint32_t PLAYER_ORDINARY_SHOT_PAUSE = 800;
-    const uint32_t ENEMY_QUICK_SHOT_PAUSE     = 600;
-    const uint32_t PLAYER_QUICK_SHOT_PAUSE    = 500;
+    const uint32_t ENEMY_ORDINARY_SHOT_PAUSE            = 1000;
+    const uint32_t PLAYER_ORDINARY_SHOT_PAUSE           = 800;
+    const uint32_t ENEMY_QUICK_SHOT_PAUSE               = 600;
+    const uint32_t PLAYER_QUICK_SHOT_PAUSE              = 500;
 
-    const uint32_t DESTROYING_PAUSE    = 400;
+    const uint32_t ORDINARY_TANK_BONUS                  = 100;
+    const uint32_t BTR_BONUS                            = 200;
+    const uint32_t QUICK_SHOOTING_BTR_BONUS             = 300;
+    const uint32_t HEAVY_TANK_BONUS                     = 400;
+
+    const uint32_t DESTROYING_PAUSE                     = 400;
 
     const std::array <std::string, 5> PLAYERS_TANK_SOUNDS_PATHS
     ({

@@ -11,13 +11,11 @@
 /// \brief Object with data about real or "solid" part of TAnk
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Tank::Tank( Animation TankMoveAnim, Animation TankExplosionAnim, Animation ShellExplosionAnim, std::vector <AudioChunk> audioVc,
-            pSharedMap pMap, RelativeRect RelativeBirthPos, GameEngine *pGameEngine,
+            pSharedMap pMap, RelativeRect RelativeBirthPos, std::shared_ptr <ObjectsManagement> pObjectsManagement,
             CommonTanksProperties::MoveDirection moveDirection ):
     DisplayedObject(), m_TankMoveAnim( TankMoveAnim ), m_TankExplosionAnim( TankExplosionAnim ),
-    m_ShellExplosionAnim( ShellExplosionAnim ), m_AudioVc( audioVc ), m_pProperties( nullptr), m_pMap( pMap),
-    m_AnimCurPos({ 0, 0, 0, 0 }), m_pRealCurPos( nullptr ), m_RealSizeRectHoriz({ 0, 0, 0, 0 }), m_RealSizeRectVert({ 0, 0, 0, 0 }),
-    m_TankCenter({ 0, 0 }), m_ShellPosition({ 0, 0 }), m_nAnimBegin( 0 ), m_nAnimEnd( 0 ), m_MoveDirection( moveDirection ),
-    m_fMove( false ), m_fBirth( true ), m_fDestroyed( false ), m_nDestroyingTime( 0 ), m_pGameEngine( pGameEngine )
+    m_ShellExplosionAnim( ShellExplosionAnim ), m_AudioVc( audioVc ), m_pMap( pMap), m_MoveDirection( moveDirection ),
+    m_pObjectsManagement( pObjectsManagement )
 {
     m_TankMoveAnim.setRelativeDestination( RelativeBirthPos );
     m_AnimCurPos = m_TankMoveAnim.getDestination();
@@ -28,7 +26,7 @@ Tank::~Tank() {}
 void Tank::countRealTankSize()
 {
     m_RealSizeRectHoriz = { 0, 0, lround( m_AnimCurPos.w * m_pProperties->m_RelativeTankSize.m_dWidth / 100 ),
-                             lround( m_AnimCurPos.h * m_pProperties->m_RelativeTankSize.m_dHeight / 100 )};
+                                  lround( m_AnimCurPos.h * m_pProperties->m_RelativeTankSize.m_dHeight / 100 )};
     m_RealSizeRectHoriz.x = m_AnimCurPos.x + ( m_AnimCurPos.w - m_RealSizeRectHoriz.w ) / 2;
     m_RealSizeRectHoriz.y = m_AnimCurPos.y + ( m_AnimCurPos.h - m_RealSizeRectHoriz.h ) / 2;
 
@@ -124,15 +122,15 @@ SDL_Rect Tank::calcPossiblePos( SDL_Rect &NewPos, CommonTanksProperties::MoveDir
     return PossiblePos;
 }
 
-bool Tank::alignmentAfterTurn( SDL_Rect &PossiblePos )
+bool Tank::tankAlignment( SDL_Rect &PossiblePos, int nShiftingLimit )
 {
     SDL_Rect PossiblePos2 = PossiblePos;
-    int nEndPos = abs( lround( 1.1 * PossiblePos.w - PossiblePos.h ) );
     int nBeginX = PossiblePos.x;
     int nBeginY = PossiblePos.y;
     bool fEnd( false );
+    m_fCheckingCollision = true;
 
-    for( int i = 1; i <= nEndPos && !fEnd; ++i )
+    for( int i = 1; i <= nShiftingLimit && !fEnd; ++i )
     {
         for( int j = -i; j <= i && !fEnd; j += i * 2 )
         {
@@ -148,53 +146,14 @@ bool Tank::alignmentAfterTurn( SDL_Rect &PossiblePos )
                 PossiblePos2.x = nBeginX;
                 PossiblePos2.x += k;
 
-                if( !m_pMap->checkCollision( PossiblePos ) && !checkTankCollision( PossiblePos ) )
+                if( !m_pMap->checkCollision( PossiblePos ) && !m_pObjectsManagement->checkTankCollision( PossiblePos ) &&
+                    !m_pObjectsManagement->checkHeartCollision( PossiblePos ))
                 {
                     fEnd = true;
                     break;
                 }
-                if( !m_pMap->checkCollision( PossiblePos2 ) && !checkTankCollision( PossiblePos2 ) )
-                {
-                    fEnd = true;
-                    PossiblePos = PossiblePos2;
-                    break;
-                }
-            }
-        }
-    }
-    return fEnd;
-}
-
-bool Tank::alignmentAfterResize (SDL_Rect &PossiblePos)
-{
-    SDL_Rect PossiblePos2 = PossiblePos;
-    int nEndPos = ( PossiblePos.w > PossiblePos.h ? PossiblePos.w : PossiblePos.h );
-    int nBeginX = PossiblePos.x;
-    int nBeginY = PossiblePos.y;
-    bool fEnd( false );
-
-    for( int i = 1; i <= nEndPos && !fEnd; ++i )
-    {
-        for( int j = -i; j <= i && !fEnd; j += i * 2 )
-        {
-            PossiblePos.x = nBeginX;
-            PossiblePos.x += j;
-            PossiblePos2.y = nBeginY;
-            PossiblePos2.y += j;
-
-            for( int k = - i ; k <= i && !fEnd; ++k )
-            {
-                PossiblePos.y = nBeginY;
-                PossiblePos.y += k;
-                PossiblePos2.x = nBeginX;
-                PossiblePos2.x += k;
-
-                if( !m_pMap->checkCollision( PossiblePos ) && !checkTankCollision( PossiblePos ) )
-                {
-                    fEnd = true;
-                    break;
-                }
-                if( !m_pMap->checkCollision( PossiblePos2 ) && !checkTankCollision( PossiblePos2 ) )
+                if( !m_pMap->checkCollision( PossiblePos2 ) && !m_pObjectsManagement->checkTankCollision( PossiblePos2 ) &&
+                    !m_pObjectsManagement->checkHeartCollision( PossiblePos ))
                 {
                     fEnd = true;
                     PossiblePos = PossiblePos2;
@@ -203,6 +162,7 @@ bool Tank::alignmentAfterResize (SDL_Rect &PossiblePos)
             }
         }
     }
+    m_fCheckingCollision = false;
     return fEnd;
 }
 
@@ -220,25 +180,29 @@ bool Tank::checkNewPosition( SDL_Rect &NewPos )
 
     CommonTanksProperties::MoveDirection NewDirection = determineDirection( NewPos );
     SDL_Rect PossiblePos = calcPossiblePos( NewPos, NewDirection );
+    m_fCheckingCollision = true;
 
     if( NewDirection != m_MoveDirection )
     {
         m_MoveDirection = NewDirection;
 
-        if( m_pMap->checkCollision( PossiblePos ) || checkTankCollision( PossiblePos ) )
+        if( m_pMap->checkCollision( PossiblePos ) || m_pObjectsManagement->checkTankCollision( PossiblePos ) ||
+            m_pObjectsManagement->checkHeartCollision( PossiblePos ) )
         {
-            if( alignmentAfterTurn( PossiblePos ) )
+            if( tankAlignment( PossiblePos, abs( lround( 1.1 * PossiblePos.w - PossiblePos.h ) ) ) )
             {
                 allowNewPosition( PossiblePos );
                 fLooseMove = true;
             }
         }
     }
-    else if( !m_pMap->checkCollision( PossiblePos ) && !checkTankCollision( PossiblePos ) )
+    else if( !m_pMap->checkCollision( PossiblePos ) && !m_pObjectsManagement->checkTankCollision( PossiblePos ) &&
+             !m_pObjectsManagement->checkHeartCollision( PossiblePos ) )
     {
         allowNewPosition( PossiblePos );
         fLooseMove = true;
     }
+    m_fCheckingCollision = false;
     return fLooseMove;
 }
 
@@ -342,7 +306,7 @@ void Tank::changeSize()
     m_TankMoveAnim.changeSize();
     SDL_Rect NewPos = m_TankMoveAnim.getDestination();
 
-    if( alignmentAfterResize( NewPos ) )
+    if( tankAlignment( NewPos, ( NewPos.w > NewPos.h ? NewPos.w : NewPos.h ) ) )
     {
         m_AnimCurPos = NewPos;
     }
@@ -370,9 +334,18 @@ void Tank::render()
 void Tank::attachProperties( pSharedTankProperties pProperties )
 {
     m_pProperties = pProperties;
+    RelativeRect RelativePos = m_TankMoveAnim.getRelativeDestination();
+
+    if( CommonTanksProperties::TankOwnerIdentity::ENEMY == m_pProperties->m_TankOwnerIdentity &&
+        CommonTanksProperties::TankType::QUICK_SHOOTING_BTR == m_pProperties->m_TankType )
+    {
+        m_AnimCurPos.h = lround( m_AnimCurPos.h * CommonTanksProperties::QUICK_SHOOTING_BTR_SCALE );
+        RelativePos.m_dHeight *= CommonTanksProperties::QUICK_SHOOTING_BTR_SCALE;
+        m_TankMoveAnim.setDestination( m_AnimCurPos );
+        m_TankMoveAnim.setRelativeDestination( RelativePos );
+    }
     countRealTankSize();
     m_pProperties->m_pMoveAlgorithm->setDisplayWidth( static_cast <uint32_t> ( m_TankMoveAnim.getPageWidth() ) );
-    RelativeRect RelativePos = m_TankMoveAnim.getRelativeDestination();
     m_pProperties->m_RelativeTankShellPos.m_dWidth  *= RelativePos.m_dWidth  / 100;
     m_pProperties->m_RelativeTankShellPos.m_dHeight *= RelativePos.m_dHeight / 100;
     calcShellPosition();
@@ -393,6 +366,11 @@ void Tank::changePosition()
     }
 }
 
+bool Tank::shotCondition()
+{
+    return true;
+}
+
 pSharedTankShell Tank::tankShot()
 {
     if( m_pProperties->m_nNumberOfLives )
@@ -401,8 +379,12 @@ pSharedTankShell Tank::tankShot()
         {
             m_nShotTime = SDL_GetTicks();
         }
-        else if( SDL_GetTicks() - m_nShotTime >= ( m_pProperties->m_nShootPause ) )
+        else if( shotCondition() && SDL_GetTicks() - m_nShotTime >= ( m_pProperties->m_nShootPause ) )
         {
+            if( CommonTanksProperties::TankOwnerIdentity::ENEMY != m_pProperties->m_TankOwnerIdentity )
+            {
+                m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::SHOT ) ).play();
+            }
             m_nShotTime = 0;
             auto Shell = std::make_shared <TankShell> ( m_ShellExplosionAnim,
                                                         m_AudioVc.at( static_cast<size_t> ( TankProperties::Sounds::SHELL_EXPLOSION )),
@@ -418,7 +400,7 @@ pSharedTankShell Tank::tankShot()
     return pSharedTankShell();
 }
 
-bool Tank::isNoLives()
+bool Tank::hasNoLives()
 {
     return 0 == m_pProperties->m_nNumberOfLives;
 }
@@ -430,13 +412,39 @@ bool Tank::isDestroyed()
 
 bool Tank::isBonus()
 {
-    if( m_pProperties->m_fBonus )
-    {
-        m_pProperties->m_fBonus = false;
+    return m_pProperties->m_fBonus;
+}
 
-        return true;
+void Tank::resetBonus()
+{
+    m_pProperties->m_fBonus = false;
+}
+
+uint32_t Tank::getDestroyingScores()
+{
+    if( CommonTanksProperties::TankOwnerIdentity::ENEMY == m_pProperties->m_TankOwnerIdentity )
+    {
+        switch( m_pProperties->m_TankType )
+        {
+        case CommonTanksProperties::TankType::ORDINARY_TANK:
+            return CommonTanksProperties::ORDINARY_TANK_BONUS;
+
+        case CommonTanksProperties::TankType::BTR:
+            return CommonTanksProperties::BTR_BONUS;
+
+        case CommonTanksProperties::TankType::QUICK_SHOOTING_BTR:
+            return CommonTanksProperties::QUICK_SHOOTING_BTR_BONUS;
+
+        case CommonTanksProperties::TankType::HEAVY_TANK:
+            return CommonTanksProperties::HEAVY_TANK_BONUS;
+        }
     }
-    return false;
+    return 0;
+}
+
+void Tank::setDefence()
+{
+    m_fDefense = true;
 }
 
 bool Tank::checkTankShellCollision( const SDL_Rect &Rect, CommonTanksProperties::TankOwnerIdentity tankOwnerIdentity )
@@ -445,11 +453,8 @@ bool Tank::checkTankShellCollision( const SDL_Rect &Rect, CommonTanksProperties:
        (( CommonTanksProperties::TankOwnerIdentity::ENEMY == tankOwnerIdentity ) ||
         ( CommonTanksProperties::TankOwnerIdentity::ENEMY == m_pProperties->m_TankOwnerIdentity )) ) )
     {
-        if( m_pProperties->m_fBonus )
-        {
-            //m_pProperties->m_fBonus = false; // It will be executed in "isBonus()" method
-        }
-        else if( m_pProperties->m_nNumberOfLives )
+        if( ( CommonTanksProperties::TankOwnerIdentity::ENEMY == m_pProperties->m_TankOwnerIdentity ?
+              !m_pProperties->m_fBonus : !m_fDefense ) && m_pProperties->m_nNumberOfLives )
         {
             --m_pProperties->m_nNumberOfLives;
         }
@@ -458,28 +463,19 @@ bool Tank::checkTankShellCollision( const SDL_Rect &Rect, CommonTanksProperties:
     return false;
 }
 
-bool Tank::checkTankCollision( const SDL_Rect &Rect )
+bool Tank::checkTankCollision( const SDL_Rect &checkingRect ) const
 {
-    for( pSharedTank &pTank: m_pGameEngine->m_TanksList )
-    {
-        if( pTank.get() != this && SDL_HasIntersection( &Rect, pTank->m_pRealCurPos ))
-        {
-            return true;
-        }
-    }
-
-    SDL_Rect HeartRect = m_pGameEngine->m_PlayersHeart.getCollisionRect();
-
-    if( SDL_HasIntersection( &Rect, &HeartRect ) && !m_pGameEngine->m_PlayersHeart.isDestroyed() )
-    {
-        return true;
-    }
-    return false;
+    return !m_fCheckingCollision && SDL_HasIntersection( &checkingRect, m_pRealCurPos );
 }
 
 CommonTanksProperties::TankOwnerIdentity Tank::getOwnerIdentity() const
 {
     return m_pProperties->m_TankOwnerIdentity;
+}
+
+CommonTanksProperties::TankType Tank::getTankType() const
+{
+    return m_pProperties->m_TankType;
 }
 
 void Tank::setRelativeDestination( RelativeRect RelativeDestRect, RelativeRect RelativeBaseRect )
@@ -496,4 +492,19 @@ void Tank::stopMove()
         m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::ENGINE_WORK ) ).stop();
     }
     m_TankMoveAnim.stopAnimation();
+}
+
+void Tank::resetLives()
+{
+    m_pProperties->m_nNumberOfLives = 0;
+}
+
+SDL_Rect Tank::getSolidPartPosition()
+{
+    return *m_pRealCurPos;
+}
+
+SDL_Rect Tank::getFullObjectPosition()
+{
+    return m_AnimCurPos;
 }

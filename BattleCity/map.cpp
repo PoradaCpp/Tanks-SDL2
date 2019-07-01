@@ -421,7 +421,32 @@ void Map::resetCurrentMapIndex()
     m_nCurrentMapIndex = 0;
 }
 
-bool Map::isMapsStillPresent()
+bool Map::isMapsStillPresent() const
 {
     return ( m_nCurrentMapIndex + 1 < m_MapsPathsVc.size() );
+}
+
+bool Map::isMapIndexDefault() const
+{
+    return !m_nCurrentMapIndex;
+}
+
+void Map::setBaseGraniteDefense()
+{
+    m_MapVc.at( BASE_TOP_POS1   )->setSourceRectNumber( GRANITE_TOP_TILE   );
+    m_MapVc.at( BASE_TOP_POS2   )->setSourceRectNumber( GRANITE_TOP_TILE   );
+    m_MapVc.at( BASE_LEFT_POS1  )->setSourceRectNumber( GRANITE_LEFT_TILE  );
+    m_MapVc.at( BASE_LEFT_POS2  )->setSourceRectNumber( GRANITE_LEFT_TILE  );
+    m_MapVc.at( BASE_RIGHT_POS1 )->setSourceRectNumber( GRANITE_RIGHT_TILE );
+    m_MapVc.at( BASE_RIGHT_POS2 )->setSourceRectNumber( GRANITE_RIGHT_TILE );
+}
+
+void Map::resetBaseGraniteDefense()
+{
+    m_MapVc.at( BASE_TOP_POS1   )->setSourceRectNumber( BRICK_TOP_TILE   );
+    m_MapVc.at( BASE_TOP_POS2   )->setSourceRectNumber( BRICK_TOP_TILE   );
+    m_MapVc.at( BASE_LEFT_POS1  )->setSourceRectNumber( BRICK_LEFT_TILE  );
+    m_MapVc.at( BASE_LEFT_POS2  )->setSourceRectNumber( BRICK_LEFT_TILE  );
+    m_MapVc.at( BASE_RIGHT_POS1 )->setSourceRectNumber( BRICK_RIGHT_TILE );
+    m_MapVc.at( BASE_RIGHT_POS2 )->setSourceRectNumber( BRICK_RIGHT_TILE );
 }

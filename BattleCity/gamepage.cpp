@@ -80,11 +80,9 @@ void GamePage::render()
         resize();
     }
     Page::render();
-    m_pMap->renderLowerLayer();
     m_pGameEngine->gameAction();
     renderMapBorder();
     m_pGameEngine->render();
-    m_pMap->renderUpperLayer();
 
     if( m_PauseKey.keyClick() )
     {

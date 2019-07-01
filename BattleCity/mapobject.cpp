@@ -63,11 +63,13 @@ void MapObject::determineTileType()
                                         static_cast <uint32_t> ( TileType::WHITE_SQUARE ) > m_nTileNumber ) )
     {
         m_TileType = TileType::BRICK;
+        m_TileCollisionProperties = TileCollisionProperties::FULL_COLLISION;
         m_DisplayingLayer = DisplayingLayer::LOWER_LAYER;
     }
     else if( m_nTileNumber <= static_cast <uint32_t> ( TileType::SOLID_WALLS_END ) && m_nTileNumber % 2 )
     {
         m_TileType = TileType::GRANITE;
+        m_TileCollisionProperties = TileCollisionProperties::FULL_COLLISION;
         m_DisplayingLayer = DisplayingLayer::LOWER_LAYER;
     }
     else if( static_cast <uint32_t> ( TileType::FOREST ) == m_nTileNumber )
@@ -91,6 +93,8 @@ void MapObject::determineTileType()
     else
     {
         m_TileType = TileType::EMPTY;
+        m_TileCollisionProperties = TileCollisionProperties::NO_COLLISION;
+        m_DisplayingLayer = DisplayingLayer::LOWER_LAYER;
     }
 }
 

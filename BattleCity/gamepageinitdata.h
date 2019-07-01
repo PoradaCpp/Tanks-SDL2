@@ -15,11 +15,11 @@ public:
     GamePageInitData( Renderer renderer );
 
     GamePageInitData( std::vector <ImgTextureInitData> &&ImgTextureInitVc1, std::vector <ImgTextureInitData> &&ImgTextureInitVc2,
-                      std::vector <Text3DInitData> &&Text3DInitVc, std::vector <ButtonInitData> &&ButtonInitVc,
-                      std::vector<ButtonInitData> &&ButtonNamedInitVc, MapInitData mapInitData,
-                      std::vector <AnimationInitData> AnimationInitDataVc, AnimationInitData HeartAnimInitData,
-                      Text3DInitData GameOverTextInitData, std::string audioChunkPath, std::string heartBreakAudioChunkPath,
-                      ImgTextureInitData bonusImgData, Renderer renderer );
+                      std::vector <Text3DInitData> &&Text3DInitVc1, std::vector <Text3DInitData> &&Text3DInitVc2,
+                      std::vector <ButtonInitData> &&ButtonInitVc, std::vector<ButtonInitData> &&ButtonNamedInitVc,
+                      MapInitData mapInitData, std::vector <AnimationInitData> AnimationInitDataVc, std::string sPageAudioChunkPath,
+                      ObjectsManagementInitData objectsManagementInitData, ImgTextureInitData BackgroundTextureInitData,
+                      Renderer renderer );
 
     ~GamePageInitData() override;
 
@@ -29,17 +29,16 @@ public:
 private:
     std::vector <ImgTextureInitData> m_ImgInitVc1;
     std::vector <ImgTextureInitData> m_ImgInitVc2;
-    std::vector <Text3DInitData>     m_Tex3DInitVc;
+    std::vector <Text3DInitData>     m_Tex3DInitVc1;
+    std::vector <Text3DInitData>     m_Tex3DInitVc2;
     std::vector <ButtonInitData>     m_ButtonInitVc;
     std::vector <ButtonInitData>     m_ButtonNamedInitVc;
     MapInitData                      m_MapInitData;
     std::vector <AnimationInitData>  m_AnimationInitDataVc;
     pSharedGameEngine                m_pGameEngine;
-    AnimationInitData                m_HeartAnimInitData;
-    Text3DInitData                   m_GameOverTextInitData;
-    std::string                      m_AudioChunkPath;
-    std::string                      m_HeartBreakAudioChunkPath;
-    ImgTextureInitData               m_BonusImgData;
+    std::string                      m_sPageAudioChunkPath;
+    ObjectsManagementInitData        m_ObjectsManagementInitData;
+    ImgTextureInitData               m_BackgroundTextureInitData;
 };
 
 #endif // GAMEPAGEINITDATA_H

@@ -16,8 +16,8 @@ StartPageInitData::StartPageInitData( Renderer renderer ):
 
     m_Tex3DInitVc
     ({
-        { m_Arial,    "MY SCORE:",          m_Red_Brown, m_Black, 185, 150, 2, 2, { 5,    3,    15,   4                             }},
-        { m_Arial,    "HI SCORE: 20000",    m_Red_Brown, m_Black, 185, 150, 2, 2, { 40,   3,    23,   4                             }},
+        { m_Arial,    "MY SCORE:",          m_Red_Brown, m_Black, 185, 150, 2, 2, { 5,    3,    15,   4   }                         },
+        { m_Arial,    "HI SCORE: 20000",    m_Red_Brown, m_Black, 185, 150, 2, 2, { 40,   3,    23,   4   }                         },
         { m_Calibrib, "1 PLAYER",           m_Hazel,     m_Black, 150, 120, 2, 2, { 45,   55,   16.5, 5   }, { 27, 57,   36.8, 20   }},
         { m_Calibrib, "2 PLAYERS",          m_Hazel,     m_Black, 150, 120, 2, 2, { 45,   65,   18.8, 5   }, { 27, 57,   36.8, 20   }},
         { m_Calibrib, "Start:",             m_Red_Hazel, m_Black, 110, 150, 2, 2, { 10,   78.7, 4.6,  3.2 }, { 10, 78.7, 44,   17.8 }},
@@ -40,7 +40,7 @@ StartPageInitData::StartPageInitData( Renderer renderer ):
          {{ "media/images/buttons/wood_button.png", { 89, 92, 6, 5 }}, { m_BaltExtB, "  Start  ",  m_Brown, m_Black, 150, 255, 1, 2 }}
      }),
 
-    m_AudioChunkPath( "media/audio/beat.wav" ),
+    m_sPageAudioChunkPath( "media/audio/beat.wav" ),
 
     m_TankArrowInitData( "media/images/tanks/heavy_tank.png", "media/audio/click.wav", { 27, 52, 15, 10  }, { 27, 62, 15, 10 },
                          { 27, 57, 36.8, 20 } )
@@ -49,15 +49,15 @@ StartPageInitData::StartPageInitData( Renderer renderer ):
 }
 
 StartPageInitData::StartPageInitData( std::vector <ImgTextureInitData> &&ImgTextureInitVc, std::vector <Text3DInitData> &&Text3DInitVc,
-                                      std::vector <ButtonInitData> &&ButtonInitVc, std::string audioChunkPath,
+                                      std::vector <ButtonInitData> &&ButtonInitVc, std::string sPageAudioChunkPath,
                                       TankArrowInitData tankArrowInitData, Renderer renderer ):
 
-    PageInitData       ( renderer                     ),
-    m_ImgInitVc        ( std::move( ImgTextureInitVc )),
-    m_Tex3DInitVc      ( std::move( Text3DInitVc     )),
-    m_ButtonInitVc     ( std::move( ButtonInitVc     )),
-    m_AudioChunkPath   ( audioChunkPath               ),
-    m_TankArrowInitData( tankArrowInitData            )
+    PageInitData        ( renderer                     ),
+    m_ImgInitVc         ( std::move( ImgTextureInitVc )),
+    m_Tex3DInitVc       ( std::move( Text3DInitVc     )),
+    m_ButtonInitVc      ( std::move( ButtonInitVc     )),
+    m_sPageAudioChunkPath( sPageAudioChunkPath          ),
+    m_TankArrowInitData ( tankArrowInitData            )
 {
     init();
 }
@@ -87,7 +87,7 @@ void StartPageInitData::init()
         m_InitContainers.m_ButtonVc.push_back( ptr );
     });
 
-    m_InitContainers.m_AudioChunk.createAudio( m_AudioChunkPath );
+    m_InitContainers.m_PageAudioChunk.createAudio( m_sPageAudioChunkPath );
     auto ptr = std::make_shared <TankArrow> ( m_TankArrowInitData, m_Renderer );
     m_InitContainers.m_DisplayedObjVc.push_back( ptr );
     m_InitContainers.m_ButtonVc.push_back( ptr );
