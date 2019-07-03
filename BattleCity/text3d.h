@@ -1,7 +1,7 @@
 #ifndef TEXT3D
 #define TEXT3D
 
-#include "texture.h"
+#include "texttexture.h"
 
 struct Text3DInitData
 {
@@ -35,6 +35,8 @@ public:
     void setTopTextureAlpha( Uint8 Alpha );
     void setBottomTextureAlpha( Uint8 Alpha );
     void setTopTextureShift( int nDx, int nDy );
+    void setText( std::string sText );
+    void setAlignment( TextTexture::TextAlignment textAlignment );
 
     void setRelativeDestination( RelativeRect RelativeDestRect, RelativeRect RelativeBaseRect = { 0, 0, 0, 0 } );
     void setDestination( SDL_Rect DestRect );
@@ -44,8 +46,8 @@ public:
     void render() override;
 
 private:
-    Texture m_TopTexture;
-    Texture m_BottomTexture;
+    TextTexture m_TopTexture;
+    TextTexture m_BottomTexture;
 
     int m_nTopTextureShiftX;
     int m_nTopTextureShiftY;

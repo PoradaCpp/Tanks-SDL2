@@ -2,10 +2,10 @@
 
 Text3D::Text3D( Text3DInitData text3DInitData, Renderer renderer ):
     DisplayedObject(),
-    m_TopTexture         ( text3DInitData.TopTextInitData,      renderer ),
-    m_BottomTexture      ( text3DInitData.BottomTextInitData,   renderer ),
-    m_nTopTextureShiftX  ( text3DInitData.m_nTopTextureShiftX            ),
-    m_nTopTextureShiftY  ( text3DInitData.m_nTopTextureShiftY            )
+    m_TopTexture         ( text3DInitData.TopTextInitData,    renderer ),
+    m_BottomTexture      ( text3DInitData.BottomTextInitData, renderer ),
+    m_nTopTextureShiftX  ( text3DInitData.m_nTopTextureShiftX          ),
+    m_nTopTextureShiftY  ( text3DInitData.m_nTopTextureShiftY          )
 {
     m_TopTexture.setBlendMode();
     m_TopTexture.setAlpha( text3DInitData.m_nTopTextureAlpha );
@@ -37,7 +37,28 @@ void Text3D::setTopTextureShift( int nDx, int nDy )
     m_nTopTextureShiftY = nDy;
 }
 
-void Text3D::setRelativeDestination(RelativeRect RelativeDestRect, RelativeRect RelativeBaseRect )
+void Text3D::setText( std::string sText )
+{
+    m_BottomTexture.setText( sText );
+    m_TopTexture.setText( sText );
+
+    if( m_BottomTexture.getTextSize() != sText.size() )
+    {
+        SDL_Rect DestRect = m_BottomTexture.getDestination();
+        DestRect.x += m_nTopTextureShiftX;
+        DestRect.y += m_nTopTextureShiftY;
+
+        m_TopTexture.setDestination( DestRect );
+    }
+}
+
+void Text3D::setAlignment( TextTexture::TextAlignment textAlignment )
+{
+    m_BottomTexture.setAlignment( textAlignment );
+    m_TopTexture.setAlignment( textAlignment );
+}
+
+void Text3D::setRelativeDestination( RelativeRect RelativeDestRect, RelativeRect RelativeBaseRect )
 {
     m_BottomTexture.setRelativeDestination( RelativeDestRect, RelativeBaseRect );
 

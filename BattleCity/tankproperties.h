@@ -61,7 +61,7 @@ namespace CommonTanksProperties
     const uint32_t ENEMY_LIGHT_TANKS_LIVES              = 1;
     const uint32_t ENEMY_HEAVY_TANKS_LIVES              = 3;
 
-    const double ORDINARY_TANK_RELATIVE_SPEED           = 0.125;
+    const double ORDINARY_TANK_RELATIVE_SPEED           = 0.14;
     const double BTR_RELATIVE_SPEED                     = 0.25;
     const double SHELL_RELATIVE_SPEED                   = 0.5;
 

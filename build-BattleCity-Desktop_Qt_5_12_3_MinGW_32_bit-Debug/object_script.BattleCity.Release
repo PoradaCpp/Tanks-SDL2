@@ -1,8 +1,14 @@
 release/main.o
 release/animation.o
+release/audiochunk.o
+release/bonus.o
 release/gameengine.o
 release/mainwindow.o
+release/music.o
+release/objectsmanagement.o
+release/playersheart.o
 release/random_uint32_t.o
+release/scorescounting.o
 release/surface.o
 release/startpage.o
 release/tank.o
@@ -21,6 +27,7 @@ release/createmappage.o
 release/buildmap.o
 release/mapobject.o
 release/map.o
+release/texttexture.o
 release/texture.o
 release/buttonnamed.o
 release/button.o

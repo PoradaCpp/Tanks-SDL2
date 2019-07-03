@@ -14,25 +14,37 @@ enum class CurrentState
 class State
 {
 public:
-    State();
+    State( std::string sHighScoreInfoPath );
     ~State();
 
     void attachWindow( MainWindow window );
     void mainAction();
-    Renderer getRenderer();
+    Renderer getRenderer() const;
     void changeState( CurrentState State );
-    CurrentState getState();
-    NumOfPlayers getNumOfPlayers();
+    CurrentState getState() const;
+    CurrentState getPreviousState() const;
+    NumOfPlayers getNumOfPlayers() const;
     void setPlayersQuantity( NumOfPlayers numOfPlayers );
     void lockPlayersQuantity();
     void unlockPlayersQuantity();
-    bool isPlayersQuantityLocked();
+    bool isPlayersQuantityLocked() const;
+    uint32_t getHighScore() const;
+    uint32_t getCurrentScore() const;
+    void setHighScore( uint32_t nHighScore );
+    void setCurrentScore( uint32_t nHighScore );
 
 private:
-    CurrentState m_State;
-    MainWindow m_Window;
-    NumOfPlayers m_NumOfPlayers;
-    bool m_fLockPlayersQuantity;
+    CurrentState m_State                = CurrentState::START_PAGE;
+    CurrentState m_PreviousState;
+    MainWindow   m_Window;
+    NumOfPlayers m_NumOfPlayers         = NumOfPlayers::TWO_PLAYERS;
+    bool         m_fLockPlayersQuantity = false;
+    std::string  m_sHighScoreInfoPath;
+    uint32_t     m_nHighScore           = 0;
+    uint32_t     m_nCurrentScore        = 0;
+
+    void initSdlAndUnits();
+    void loadHighScore();
 };
 
 #endif // MAINSTATE_H

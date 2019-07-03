@@ -1,12 +1,31 @@
 #include <iostream>
+#include <fstream>
+#include <iterator>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
 
 #include "state.h"
 
-State::State(): m_State( CurrentState::START_PAGE ), m_NumOfPlayers( NumOfPlayers::TWO_PLAYERS ), m_fLockPlayersQuantity( false )
+State::State( std::string sHighScoreInfoPath ): m_sHighScoreInfoPath( sHighScoreInfoPath )
 {    
+    initSdlAndUnits();
+    loadHighScore();
+}
+
+State::~State()
+{
+    //Destroy window
+    m_Window.free();
+
+    //Quit SDL subsystems
+    TTF_Quit();
+    IMG_Quit();
+    SDL_Quit();
+}
+
+void State::initSdlAndUnits()
+{
     //Initialize SDL
     if( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0 )
     {
@@ -46,15 +65,21 @@ State::State(): m_State( CurrentState::START_PAGE ), m_NumOfPlayers( NumOfPlayer
     }
 }
 
-State::~State()
+void State::loadHighScore()
 {
-    //Destroy window
-    m_Window.free();
+    std::ifstream dataFile( m_sHighScoreInfoPath );
 
-    //Quit SDL subsystems
-    TTF_Quit();
-    IMG_Quit();
-    SDL_Quit();
+    if( !dataFile )
+    {
+        std::cerr << "File opening error! Can't open file " << m_sHighScoreInfoPath << '\n';
+        exit(-1);
+    }
+    std::istream_iterator <uint32_t> dataBegin( dataFile ), dataEnd;
+
+    if( dataBegin != dataEnd )
+    {
+        m_nHighScore = *dataBegin;
+    }
 }
 
 void State::attachWindow(MainWindow window )
@@ -88,22 +113,28 @@ void State::mainAction()
     }
 }
 
-Renderer State::getRenderer()
+Renderer State::getRenderer() const
 {
     return m_Window.getRenderer();
 }
 
 void State::changeState( CurrentState State )
 {
+    m_PreviousState = m_State;
     m_State = State;
 }
 
-CurrentState State::getState()
+CurrentState State::getState() const
 {
     return m_State;
 }
 
-NumOfPlayers State::getNumOfPlayers()
+CurrentState State::getPreviousState() const
+{
+    return m_PreviousState;
+}
+
+NumOfPlayers State::getNumOfPlayers() const
 {
     return m_NumOfPlayers;
 }
@@ -126,7 +157,40 @@ void State::unlockPlayersQuantity()
     m_fLockPlayersQuantity = false;
 }
 
-bool State::isPlayersQuantityLocked()
+bool State::isPlayersQuantityLocked() const
 {
     return m_fLockPlayersQuantity;
+}
+
+uint32_t State::getHighScore() const
+{
+    return m_nHighScore;
+}
+
+uint32_t State::getCurrentScore() const
+{
+    return m_nCurrentScore;
+}
+
+void State::setHighScore( uint32_t nHighScore )
+{
+    if( nHighScore > m_nHighScore )
+    {
+        m_nHighScore = nHighScore;
+        std::ofstream writeNewHighScore( m_sHighScoreInfoPath );
+
+        if( !writeNewHighScore )
+        {
+            std::cerr << "File opening error! Can't open file " << m_sHighScoreInfoPath << '\n';
+            exit(-1);
+        }
+        writeNewHighScore << m_nHighScore;
+        writeNewHighScore.close();
+    }
+}
+
+void State::setCurrentScore( uint32_t nCurrentScore )
+{
+    m_nCurrentScore = nCurrentScore;
+    setHighScore( nCurrentScore );
 }

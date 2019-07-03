@@ -11,6 +11,7 @@ public:
                  CommonTanksProperties::MoveDirection moveDirection = CommonTanksProperties::MoveDirection::UP );
     ~TankOfEnemy() override;
 
+    void render() override;
     void changePosition() override;
 
 private:

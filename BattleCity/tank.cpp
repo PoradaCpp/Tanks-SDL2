@@ -5,7 +5,6 @@
 #include "gameengine.h"
 #include "tankshell.h"
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Tank::COLLISION_INFO
 /// \brief Object with data about real or "solid" part of TAnk
@@ -485,7 +484,7 @@ void Tank::setRelativeDestination( RelativeRect RelativeDestRect, RelativeRect R
 
 void Tank::stopMove()
 {
-    m_fMove = false;
+    m_fMove = true;
     if( CommonTanksProperties::TankOwnerIdentity::ENEMY != m_pProperties->m_TankOwnerIdentity )
     {
         m_AudioVc.at( static_cast <size_t> ( TankProperties::Sounds::MOVE ) ).stop();

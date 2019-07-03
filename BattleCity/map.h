@@ -51,6 +51,7 @@ public:
     void resetCurrentMapIndex();
     bool isMapsStillPresent() const;
     bool isMapIndexDefault() const;
+    uint32_t getStageNumber() const;
     void setBaseGraniteDefense();
     void resetBaseGraniteDefense();
 

@@ -32,6 +32,7 @@ SOURCES += main.cpp \
     buildmap.cpp \
     mapobject.cpp \
     map.cpp \
+    texttexture.cpp \
     texture.cpp \
     buttonnamed.cpp \
     button.cpp \
@@ -86,6 +87,7 @@ HEADERS += \
     buildmap.h \
     mapobject.h \
     map.h \
+    texttexture.h \
     texture.h \
     buttonnamed.h \
     button.h \

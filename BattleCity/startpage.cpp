@@ -6,10 +6,13 @@
 #include "state.h"
 
 
-StartPage::StartPage( InitContainers &&objContainers, State *pState): Page( std::move( objContainers ) ), m_pState( pState ),
-    m_CurrentState( CurrentState::CREATE_MAP )
+StartPage::StartPage( InitContainers &&objContainers, ScoresText3DData scoresText3DData, State *pState, Renderer renderer ):
+    Page( std::move( objContainers ) ), m_pState( pState ),
+    m_CurrentState( CurrentState::CREATE_MAP ), m_MyScoreText3D( scoresText3DData.m_MyScoreTextInitData, renderer ),
+    m_HighScoreText3D( scoresText3DData.m_HighScoreTextInitData, renderer )
 {
     initButtons( pState );
+    m_HighScoreText3D.setText( std::to_string( m_pState->getHighScore() ) );
 }
 
 StartPage::~StartPage() {}
@@ -50,11 +53,20 @@ void StartPage::initButtons( State *pState )
     }
 }
 
+void StartPage::resize()
+{
+    Page::resize();
+    m_MyScoreText3D.changeSize();
+    m_HighScoreText3D.changeSize();
+}
+
 void StartPage::render()
 {
     if( m_CurrentState != CurrentState::START_PAGE )
     {
         m_CurrentState = CurrentState::START_PAGE;
+        m_HighScoreText3D.setText( std::to_string( m_pState->getHighScore() ) );
+        m_MyScoreText3D.setText( std::to_string( m_pState->getCurrentScore() ) );
         resize();
 
         m_AudioChunk.play( AudioChunk::INFINITELY_PLAYING );
@@ -78,4 +90,7 @@ void StartPage::render()
     }
 
     Page::render();
+
+    m_MyScoreText3D.render();
+    m_HighScoreText3D.render();
 }

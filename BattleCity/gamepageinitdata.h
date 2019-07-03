@@ -15,11 +15,10 @@ public:
     GamePageInitData( Renderer renderer );
 
     GamePageInitData( std::vector <ImgTextureInitData> &&ImgTextureInitVc1, std::vector <ImgTextureInitData> &&ImgTextureInitVc2,
-                      std::vector <Text3DInitData> &&Text3DInitVc1, std::vector <Text3DInitData> &&Text3DInitVc2,
-                      std::vector <ButtonInitData> &&ButtonInitVc, std::vector<ButtonInitData> &&ButtonNamedInitVc,
-                      MapInitData mapInitData, std::vector <AnimationInitData> AnimationInitDataVc, std::string sPageAudioChunkPath,
-                      ObjectsManagementInitData objectsManagementInitData, ImgTextureInitData BackgroundTextureInitData,
-                      Renderer renderer );
+                      std::vector <Text3DInitData> &&Text3DInitVc, std::vector <ButtonInitData> &&ButtonInitVc,
+                      std::vector<ButtonInitData> &&ButtonNamedInitVc, MapInitData mapInitData,
+                      std::vector <AnimationInitData> AnimationInitDataVc, std::string sPageAudioChunkPath,
+                      ObjectsManagementInitData objectsManagementInitData, Renderer renderer );
 
     ~GamePageInitData() override;
 
@@ -29,8 +28,7 @@ public:
 private:
     std::vector <ImgTextureInitData> m_ImgInitVc1;
     std::vector <ImgTextureInitData> m_ImgInitVc2;
-    std::vector <Text3DInitData>     m_Tex3DInitVc1;
-    std::vector <Text3DInitData>     m_Tex3DInitVc2;
+    std::vector <Text3DInitData>     m_Tex3DInitVc;
     std::vector <ButtonInitData>     m_ButtonInitVc;
     std::vector <ButtonInitData>     m_ButtonNamedInitVc;
     MapInitData                      m_MapInitData;
@@ -38,7 +36,6 @@ private:
     pSharedGameEngine                m_pGameEngine;
     std::string                      m_sPageAudioChunkPath;
     ObjectsManagementInitData        m_ObjectsManagementInitData;
-    ImgTextureInitData               m_BackgroundTextureInitData;
 };
 
 #endif // GAMEPAGEINITDATA_H

@@ -3,13 +3,10 @@
 
 #include "texture.h"
 
-Texture::Texture( Renderer renderer ): DisplayedObject(), m_pTexture( nullptr ), m_Renderer( renderer ), m_nSrcHeight( 0 ),
-    m_nSrcWidth( 0 ), m_nPageHeight( 0 ), m_nPageWidth( 0 ), m_DestRect({ 0, 0, 0, 0 }), m_BaseRect({ 0, 0, 0, 0 }),
-    m_fBaseGiven( false ), m_fDestChanged( false ) {}
+Texture::Texture( Renderer renderer ): DisplayedObject(), m_Renderer( renderer ) {}
 
-Texture::Texture( ImgTextureInitData ImgInitData, Renderer renderer ): DisplayedObject(), m_pTexture( nullptr ),
-    m_Renderer( renderer ), m_RelativeDestRect( ImgInitData.m_DestRect ), m_DestRect({ 0, 0, 0, 0 }),
-    m_RelativeBaseRect( ImgInitData.m_BaseRect ), m_BaseRect({ 0, 0, 0, 0 }), m_fDestChanged( false )
+Texture::Texture( ImgTextureInitData ImgInitData, Renderer renderer ): DisplayedObject(), m_Renderer( renderer ),
+    m_RelativeDestRect( ImgInitData.m_DestRect ), m_RelativeBaseRect( ImgInitData.m_BaseRect )
 {
     m_fBaseGiven = m_RelativeBaseRect.relativeRectNotEmpty();
 
@@ -19,9 +16,8 @@ Texture::Texture( ImgTextureInitData ImgInitData, Renderer renderer ): Displayed
     makeTextureFromSurface( surface );
 }
 
-Texture::Texture( TextTextureInitData TextInitData, Renderer renderer): DisplayedObject(), m_pTexture( nullptr ),
-    m_Renderer( renderer ), m_RelativeDestRect( TextInitData.m_DestRect ), m_DestRect({ 0, 0, 0, 0 }),
-    m_RelativeBaseRect( TextInitData.m_BaseRect ), m_BaseRect({ 0, 0, 0, 0 }), m_fDestChanged( false )
+Texture::Texture( TextTextureInitData TextInitData, Renderer renderer): DisplayedObject(), m_Renderer( renderer ),
+    m_RelativeDestRect( TextInitData.m_DestRect ), m_RelativeBaseRect( TextInitData.m_BaseRect )
 {
     m_fBaseGiven = m_RelativeBaseRect.relativeRectNotEmpty();
 
@@ -30,12 +26,6 @@ Texture::Texture( TextTextureInitData TextInitData, Renderer renderer): Displaye
     Surface surface( TextInitData.m_TextSurfaceInitData );
     makeTextureFromSurface( surface );
 }
-
-Texture::Texture( const Texture &texture ): DisplayedObject(), m_pTexture( texture.m_pTexture ), m_Renderer( texture.m_Renderer ),
-    m_nSrcHeight( texture.m_nSrcHeight ), m_nSrcWidth( texture.m_nSrcWidth ), m_nPageHeight( texture.m_nPageHeight ),
-    m_nPageWidth( texture.m_nPageWidth ), m_RelativeDestRect( texture.m_RelativeDestRect ), m_DestRect( texture.m_DestRect ),
-    m_RelativeBaseRect( texture.m_RelativeBaseRect ), m_BaseRect( texture.m_BaseRect ),m_fBaseGiven( texture.m_fBaseGiven ),
-    m_fDestChanged( texture.m_fDestChanged ) {}
 
 Texture::~Texture()
 {
@@ -54,9 +44,9 @@ void Texture::shareInstantTexture( Texture texture )
     m_nSrcHeight = texture.getHeight();
 }
 
-pSharedSDLTexture Texture::makeTextureFromSurface( Surface &surface , Renderer &renderer ) const
+void Texture::makeTextureFromSurface( Surface &surface )
 {
-    pSharedSDLTexture temp_pTexture( SDL_CreateTextureFromSurface( renderer, surface ),
+    pSharedSDLTexture temp_pTexture( SDL_CreateTextureFromSurface( m_Renderer, surface ),
                                   [] ( SDL_Texture *texture ) { SDL_DestroyTexture( texture ); });
 
     if( !temp_pTexture )
@@ -65,12 +55,7 @@ pSharedSDLTexture Texture::makeTextureFromSurface( Surface &surface , Renderer &
         std::exit(-1);
     }
 
-    return temp_pTexture;
-}
-
-void Texture::makeTextureFromSurface( Surface &surface )
-{
-    m_pTexture = makeTextureFromSurface( surface, m_Renderer );
+    m_pTexture = temp_pTexture;
 
     m_nSrcWidth = surface.getWidth();
     m_nSrcHeight = surface.getHeight();

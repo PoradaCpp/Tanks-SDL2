@@ -9,13 +9,15 @@
 #include "tankshell.h"
 #include "gamepage.h"
 
-const RelativeRect ObjectsManagement::SCORES_TEXT_SIZE( 0, 0, 3, 5 );
+const RelativeRect ObjectsManagement::SCORES_TEXT_SIZE( 0, 0, 1.5, 2.5 );
 
 ObjectsManagement::ObjectsManagement( GameEngine *pGameEngine, pSharedMap pMap, ObjectsManagementInitData InitData, Renderer renderer ):
     m_pGameEngine( pGameEngine ), m_BonusesTexture( InitData.m_BonusTextureInitData, renderer ), m_Renderer( renderer ),
     m_PlayersHeart( InitData.m_HeartInitData, renderer ), m_GameOverText( InitData.m_GameOverTextInitData, renderer ),
     m_pMap( pMap ), m_BonusAddAudio( InitData.m_sBonusAddAudioPath ), m_BonusTakenAudio( InitData.m_sBonusTakenAudioPath ),
-    m_ScoresTextData( InitData.m_GameOverTextInitData )
+    m_ScoresTextData( InitData.m_GameOverTextInitData ),
+    m_ScoresCounting( InitData.m_BackgroundTextureInitData, InitData.m_ScoresFormTextInitDataVc,
+                      InitData.m_AmountsTextInitDataVc, InitData.m_ScoresCountingAudioPath, renderer )
 {
     m_ScoresTextData.m_nTopTextureShiftX = 1;
     m_ScoresTextData.m_nTopTextureShiftY = 1;
@@ -23,6 +25,8 @@ ObjectsManagement::ObjectsManagement( GameEngine *pGameEngine, pSharedMap pMap, 
     m_ScoresTextData.BottomTextInitData.m_DestRect = SCORES_TEXT_SIZE;
     m_ScoresTextData.TopTextInitData.m_BaseRect    = MapObject::TILES_BASE_RECT;
     m_ScoresTextData.BottomTextInitData.m_BaseRect = MapObject::TILES_BASE_RECT;
+    m_ScoresTextData.TopTextInitData.m_TextSurfaceInitData.m_sText    = "0";
+    m_ScoresTextData.BottomTextInitData.m_TextSurfaceInitData.m_sText = "0";
 }
 
 ObjectsManagement::~ObjectsManagement() {}
@@ -147,7 +151,10 @@ void ObjectsManagement::createBonus()
 void ObjectsManagement::init()
 {
     m_PlayersHeart.init();
-
+    m_ScoresCounting.setStageNumber( m_pMap->getStageNumber() );
+    m_ScoresCounting.setHighScore( m_pGameEngine->m_nHighScore );
+    m_ScoresCounting.resetScoresCounter();
+    m_ScoresCounting.resetStageScores();
     m_nEnemyTankStopTime = 0;
     m_fEnemyTankStop     = false;
     m_nBaseDefenseOnTime = 0;
@@ -256,47 +263,17 @@ void ObjectsManagement::scoresProcessing( TankAndTextPair &TankAndText, const pS
     if( CommonTanksProperties::TankOwnerIdentity::ENEMY == TankAndText.first->getOwnerIdentity() )
     {
         scoresTextCreating( TankAndText );
-
-        if( CommonTanksProperties::TankOwnerIdentity::PLAYER1 == pShell->getOwnerIdentity() )
-        {
-            m_nTotalPlayer1Scores += TankAndText.first->getDestroyingScores();
-        }
-        else if( CommonTanksProperties::TankOwnerIdentity::PLAYER2 == pShell->getOwnerIdentity() )
-        {
-            m_nTotalPlayer2Scores += TankAndText.first->getDestroyingScores();
-        }
-
-        switch( TankAndText.first->getTankType() )
-        {
-        case CommonTanksProperties::TankType::ORDINARY_TANK:
-            ++m_nNumOfDestroyedPlainTank;
-            break;
-
-        case CommonTanksProperties::TankType::BTR:
-            ++m_nNumOfDestroyedBTR;
-            break;
-
-        case CommonTanksProperties::TankType::QUICK_SHOOTING_BTR:
-            ++m_nNumOfDestroyedQS_BTR;
-            break;
-
-        case CommonTanksProperties::TankType::HEAVY_TANK:
-            ++m_nNumOfDestroyedHeavyTank;
-            break;
-        }
+        m_ScoresCounting.scoresProcessing( TankAndText.first, pShell );
     }
 }
 
 void ObjectsManagement::scoresTextCreating( TankAndTextPair &TankAndText )
 {
-    std::string sBonusText = std::to_string( TankAndText.first->getDestroyingScores() );
     SDL_Rect TankPos = TankAndText.first->getFullObjectPosition();
-
-    m_ScoresTextData.TopTextInitData.m_TextSurfaceInitData.m_sText    = sBonusText;
-    m_ScoresTextData.BottomTextInitData.m_TextSurfaceInitData.m_sText = sBonusText;
 
     TankAndText.second = std::make_shared <Text3D>( m_ScoresTextData, m_Renderer );
     TankAndText.second->setPosition( TankPos.x, TankPos.y );
+    TankAndText.second->setText( std::to_string( TankAndText.first->getDestroyingScores() ) );
 }
 
 void ObjectsManagement::bonusScoresTextCreating()
@@ -306,11 +283,9 @@ void ObjectsManagement::bonusScoresTextCreating()
         m_nBonusScoresShowTime = SDL_GetTicks();
         SDL_Rect BonusPos = m_pBonus->getDestination();
 
-        m_ScoresTextData.TopTextInitData.m_TextSurfaceInitData.m_sText    = BONUS_SCORES;
-        m_ScoresTextData.BottomTextInitData.m_TextSurfaceInitData.m_sText = BONUS_SCORES;
-
         m_pBonusScoresText = std::make_shared <Text3D>( m_ScoresTextData, m_Renderer );
         m_pBonusScoresText->setPosition( BonusPos.x, BonusPos.y );
+        m_pBonusScoresText->setText( BONUS_SCORES_TEXT );
     }
     else if( SDL_GetTicks() - m_nBonusScoresShowTime >= BONUS_SCORES_SHOW_TIME )
     {
@@ -322,17 +297,27 @@ void ObjectsManagement::bonusScoresTextCreating()
 
 void ObjectsManagement::resetScores()
 {
-    m_nNumOfDestroyedPlainTank = 0;
-    m_nNumOfDestroyedBTR       = 0;
-    m_nNumOfDestroyedQS_BTR    = 0;
-    m_nNumOfDestroyedHeavyTank = 0;
-    m_nTotalPlayer1Scores      = 0;
-    m_nTotalPlayer2Scores      = 0;
+    m_ScoresCounting.resetScores();
 }
 
 void ObjectsManagement::gameOverTextRender()
 {
     m_GameOverText.render();
+}
+
+void ObjectsManagement::finalScoresCounting()
+{
+    m_ScoresCounting.scoresCounting();
+}
+
+void ObjectsManagement::finalScoresRender()
+{
+    m_ScoresCounting.render();
+}
+
+uint32_t ObjectsManagement::getCurrentScore() const
+{
+    return m_ScoresCounting.getCurrentScore();
 }
 
 bool ObjectsManagement::checkTankCollision( SDL_Rect &checkingRect ) const
@@ -394,6 +379,7 @@ void ObjectsManagement::bonusProcessing( pSharedTank pTank )
             break;
         }
         bonusScoresTextCreating();
+        m_ScoresCounting.addToScores( pTank->getOwnerIdentity(), BONUS_SCORES );
         m_fBonusScoresShow = true;
         m_pBonus->playTakingSound();
         m_pBonus.reset();
@@ -419,6 +405,7 @@ void ObjectsManagement::resize()
 
     m_PlayersHeart.resize();
     m_GameOverText.changeSize();
+    m_ScoresCounting.changeSize();
 
     if( m_pBonus )
     {

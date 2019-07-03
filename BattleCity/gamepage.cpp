@@ -23,27 +23,29 @@ void GamePage::initButtons( State *pState )
     {
         m_ButtonVc.at( static_cast <size_t> ( Buttons::SET_PAUSE ))->setAction( [this] ()
         {
-            m_pGameEngine->setStartOrPause();
+            if( m_pGameEngine->isGamePaused() )
+            {
+                m_pGameEngine->resetPause();
+            }
+            else
+            {
+                m_pGameEngine->setPause();
+            }
         });
 
-        m_ButtonVc.at( static_cast <size_t> ( Buttons::SET_CREATE_MAP_STATE ))->setAction( [pState, this] ()
-        {
-            pState->changeState( CurrentState::CREATE_MAP );
-            m_CurrentState = CurrentState::CREATE_MAP;
-        });
-
-        m_ButtonVc.at( static_cast <size_t> ( Buttons::SET_START_PAGE_STATE ))->setAction( [pState, this] ()
+        m_ButtonVc.at( static_cast <size_t> ( Buttons::SET_PREVIOUS_STATE ))->setAction( [pState, this] ()
         {
             if( m_pGameEngine->isGameOn() )
             {
                 pState->lockPlayersQuantity();
+                m_pGameEngine->setPause();
             }
             else
             {
                 pState->unlockPlayersQuantity();
             }
-            pState->changeState( CurrentState::START_PAGE );
-            m_CurrentState = CurrentState::START_PAGE;
+            pState->changeState( m_PreviousState );
+            m_CurrentState = m_PreviousState;
         });
     }
     else if( static_cast <size_t> ( Buttons::BUTTONS_QUANTITY ) < m_ButtonVc.size() )
@@ -75,8 +77,17 @@ void GamePage::render()
     if( m_CurrentState != CurrentState::GAME )
     {
         m_CurrentState = CurrentState::GAME;
-        m_pGameEngine->gameStartInit();
-        m_AudioChunk.play();
+        m_PreviousState = m_pState->getPreviousState();
+
+        if( !m_pGameEngine->isGamePaused() )
+        {
+            m_pGameEngine->gameStartInit();
+            m_AudioChunk.play();
+        }
+        else
+        {
+            m_pGameEngine->resetPause();
+        }
         resize();
     }
     Page::render();
@@ -86,7 +97,14 @@ void GamePage::render()
 
     if( m_PauseKey.keyClick() )
     {
-        m_pGameEngine->setStartOrPause();
+        if( m_pGameEngine->isGamePaused() )
+        {
+            m_pGameEngine->resetPause();
+        }
+        else
+        {
+            m_pGameEngine->setPause();
+        }
     }
 }
 
@@ -107,7 +125,17 @@ void GamePage::playStartSound()
     m_AudioChunk.play();
 }
 
-NumOfPlayers GamePage::getNumOfPlayers()
+NumOfPlayers GamePage::getNumOfPlayers() const
 {
     return m_pState->getNumOfPlayers();
+}
+
+uint32_t GamePage::getHighScore() const
+{
+    return m_pState->getHighScore();
+}
+
+void GamePage::setCurrentScore( uint32_t nCurrentScore )
+{
+    m_pState->setCurrentScore( nCurrentScore );
 }

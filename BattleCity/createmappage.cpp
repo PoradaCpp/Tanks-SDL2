@@ -71,7 +71,7 @@ CreateMapPage::CreateMapPage( InitContainers &&objContainers , State *pState, Re
      m_Renderer( renderer ), m_CurrentState( CurrentState::START_PAGE )
 {
     m_pMap->loadDefaultMap();
-    m_pMapUnit = std::make_shared < BuildMap > ( m_pMap->getTilesTexture(), m_Renderer );
+    m_pMapUnit = std::make_shared <BuildMap> ( m_pMap->getTilesTexture(), m_Renderer );
     m_MapSquareButton.attachMap( m_pMap );
     initButtons( pState );
 }

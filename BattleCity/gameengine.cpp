@@ -20,22 +20,43 @@ const std::array <const RelativeRect*, 4> GameEngine::ENEMY_BIRTH_PLACE_ARR{ &EN
                                                                              &ENEMY3_BIRTH_POS, &ENEMY4_BIRTH_POS };
 
 GameEngine::GameEngine( std::vector <AnimationInitData> AnimInitDataVc, std::vector <ImgTextureInitData> LivesAndEnemiesInitDataVc,
-                        ObjectsManagementInitData objectsManagementInitData, ImgTextureInitData BackgroundTextureInitData,
-                        std::vector<Text3DInitData> Text3DVcInitData, Renderer renderer, pSharedMap pMap ):
-    m_ScoresCounting( BackgroundTextureInitData, Text3DVcInitData, renderer ), m_Renderer( renderer ), m_pMap( pMap )
+                        ObjectsManagementInitData objectsManagementInitData, Renderer renderer, pSharedMap pMap ):
+    m_Renderer( renderer ), m_pMap( pMap )
+{
+    animInit( AnimInitDataVc, renderer );
+    livesAndEnemiesInit( LivesAndEnemiesInitDataVc, renderer );
+    soundsInit();
+
+    m_pObjectsManagement = std::make_shared <ObjectsManagement> ( this, pMap, objectsManagementInitData, renderer );
+}
+
+GameEngine::~GameEngine() {}
+
+void GameEngine::animInit( std::vector <AnimationInitData> AnimInitDataVc, Renderer renderer )
 {
     m_AnimTextureVc.reserve( AnimInitDataVc.size() );
     std::for_each( AnimInitDataVc.begin(), AnimInitDataVc.end(), [this, renderer] ( AnimationInitData InitData )
     {
         m_AnimTextureVc.emplace_back( InitData, renderer );
     });
+}
 
+void GameEngine::livesAndEnemiesInit(std::vector <ImgTextureInitData> LivesAndEnemiesInitDataVc , Renderer renderer)
+{
     m_LivesAndEnemiesTextureVc.reserve( LivesAndEnemiesInitDataVc.size() + 1 );
     std::for_each( LivesAndEnemiesInitDataVc.begin(), LivesAndEnemiesInitDataVc.end(), [this, renderer] ( ImgTextureInitData InitData )
     {
         m_LivesAndEnemiesTextureVc.emplace_back( InitData, renderer );
     });
 
+    m_EnemyImagesPlaceVc.resize  ( MAX_NUM_OF_ENEMIES, { 0, 0, 0, 0 });
+    m_Player1ImagesPlaceVc.resize( MAX_PLAYERS_LIVES,  { 0, 0, 0, 0 });
+    m_Player2ImagesPlaceVc.resize( MAX_PLAYERS_LIVES,  { 0, 0, 0, 0 });
+    calcLiveRectSize();
+}
+
+void GameEngine::soundsInit()
+{
     m_PlayersAudioVc.reserve( CommonTanksProperties::PLAYERS_TANK_SOUNDS_PATHS.size() );
 
     for( std::string sAudioChunkPath: CommonTanksProperties::PLAYERS_TANK_SOUNDS_PATHS )
@@ -49,16 +70,8 @@ GameEngine::GameEngine( std::vector <AnimationInitData> AnimInitDataVc, std::vec
     {
         m_EnemyAudioVc.emplace_back( sAudioChunkPath );
     }
-
-    m_EnemyImagesPlaceVc.resize  ( MAX_NUM_OF_ENEMIES, { 0, 0, 0, 0 });
-    m_Player1ImagesPlaceVc.resize( MAX_PLAYERS_LIVES,  { 0, 0, 0, 0 });
-    m_Player2ImagesPlaceVc.resize( MAX_PLAYERS_LIVES,  { 0, 0, 0, 0 });
-    calcLiveRectSize();
-
-    m_pObjectsManagement = std::make_shared <ObjectsManagement> ( this, pMap, objectsManagementInitData, renderer );
 }
 
-GameEngine::~GameEngine() {}
 
 SDL_Rect GameEngine::RelativeToBase( const RelativeRect &relativeRect )
 {
@@ -96,7 +109,6 @@ SDL_Rect GameEngine::RelativeToBase( const RelativeRect &relativeRect )
                             / 2 ) * nPageWidth ) / 100 );
     DestRect.y = lround( (( RelativeDestRect.m_dY + ( RelativeDestRect.m_dHeight - ( DestRect.h * 100.0 ) / nPageHeight )
                             / 2 ) * nPageHeight ) / 100 );
-
     return DestRect;
 }
 
@@ -336,6 +348,7 @@ void GameEngine::gameStartInit()
     if( GameState::GAME_OFF == m_CurrentState || GameState::GAME_WON == m_CurrentState )
     {
         m_NumOfPlayers = m_pGamePage->getNumOfPlayers();
+        m_nHighScore = m_pGamePage->getHighScore();
 
         if( NumOfPlayers::TWO_PLAYERS == m_NumOfPlayers )
         {
@@ -350,8 +363,8 @@ void GameEngine::gameStartInit()
         {
             if( m_CurrentState != GameState::GAME_WON )
             {
-                m_nPlayer1Lives      = START_PLAYERS_LIVES;
-                m_nPlayer2Lives      = 0;
+                m_nPlayer1Lives = START_PLAYERS_LIVES;
+                m_nPlayer2Lives = 0;
             }
             m_nNumOfEnemiesOnMap = NUM_OF_ENEMIES_ON_MAP_1PLAYER;
         }
@@ -403,6 +416,8 @@ void GameEngine::gameAction()
 
         m_pObjectsManagement->destroyPlayersTanks();
         m_pObjectsManagement->mainProcess();
+        m_pObjectsManagement->resetScores();
+        m_pGamePage->setCurrentScore( 0 );
 
         if( SDL_GetTicks() - m_nGameStateChangingTime >= GAME_OVER_TIMEOUT )
         {
@@ -417,6 +432,7 @@ void GameEngine::gameAction()
 
     case GameState::GAME_WON:
         m_pObjectsManagement->mainProcess();
+        m_pObjectsManagement->finalScoresCounting();
 
         if( SDL_GetTicks() - m_nGameStateChangingTime >= GAME_WON_TIMEOUT )
         {
@@ -438,6 +454,8 @@ void GameEngine::gameAction()
                 m_CurrentState = GameState::GAME_OFF;
                 resetPlayersTankType( CommonTanksProperties::TankOwnerIdentity::PLAYER1 );
                 resetPlayersTankType( CommonTanksProperties::TankOwnerIdentity::PLAYER2 );
+                m_pGamePage->setCurrentScore( m_pObjectsManagement->getCurrentScore() );
+                m_pObjectsManagement->resetScores();
             }
         }
         break;
@@ -457,7 +475,6 @@ void GameEngine::resize()
     });
 
     m_pObjectsManagement->resize();
-    m_ScoresCounting.changeSize();
     calcBirthPlacesRectSize();
     calcLiveRectSize();
 }
@@ -472,7 +489,7 @@ void GameEngine::render()
     if( (( GameState::GAME_PAUSED == m_CurrentState   && GameState::GAME_WON == m_PreviousState ) ||
            GameState::GAME_WON    == m_CurrentState ) && m_nGameStateChangingTime )
     {
-        m_ScoresCounting.render();
+        m_pObjectsManagement->finalScoresRender();
     }
     else if((( GameState::GAME_PAUSED == m_CurrentState   && GameState::GAME_OFF == m_PreviousState ) ||
                GameState::GAME_OFF    == m_CurrentState ) && m_nGameStateChangingTime )
@@ -481,16 +498,12 @@ void GameEngine::render()
     }
 }
 
-void GameEngine::setStartOrPause()
+void GameEngine::setPause()
 {
     if( GameState::GAME_PAUSED != m_CurrentState )
     {
         m_PreviousState = m_CurrentState;
         m_CurrentState = GameState::GAME_PAUSED;
-    }
-    else
-    {
-        m_CurrentState = m_PreviousState;
     }
 
     if( GameState::GAME_PAUSED == m_CurrentState )
@@ -499,7 +512,17 @@ void GameEngine::setStartOrPause()
     }
 }
 
+void GameEngine::resetPause()
+{
+    m_CurrentState = m_PreviousState;
+}
+
 bool GameEngine::isGameOn()
 {
     return GameState::GAME_OFF != m_CurrentState;
+}
+
+bool GameEngine::isGamePaused()
+{
+    return GameState::GAME_PAUSED == m_CurrentState;
 }

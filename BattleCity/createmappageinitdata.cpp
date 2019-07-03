@@ -46,14 +46,14 @@ CreateMapPageInitData::CreateMapPageInitData( Renderer renderer ):
     init();
 }
 
-CreateMapPageInitData::CreateMapPageInitData( std::vector < ImgTextureInitData > &&ImgTextureInitVc,
-                                              std::vector <Text3DInitData> &&Text3DInitVc,
-                                              std::vector <ButtonInitData> &&ButtonInitVc,
-                                              std::vector <ButtonInitData> &&ButtonNamedInitVc,
+CreateMapPageInitData::CreateMapPageInitData( std::vector <ImgTextureInitData> &&ImgTextureInitVc,
+                                              std::vector <Text3DInitData>     &&Text3DInitVc,
+                                              std::vector <ButtonInitData>     &&ButtonInitVc,
+                                              std::vector <ButtonInitData>     &&ButtonNamedInitVc,
                                               MapInitData mapInitData,
                                               Renderer renderer ):
 
-    PageInitData           ( renderer                     ),
+    PageInitData       ( renderer                     ),
     m_ImgInitVc        ( std::move( ImgTextureInitVc  )),
     m_Tex3DInitVc      ( std::move( Text3DInitVc      )),
     m_ButtonInitVc     ( std::move( ButtonInitVc      )),
@@ -74,28 +74,28 @@ void CreateMapPageInitData::init()
 
     std::for_each( m_ImgInitVc.begin(), m_ImgInitVc.end(), [ this ] ( ImgTextureInitData initData )
     {
-        m_InitContainers.m_DisplayedObjVc.push_back( std::make_shared < Texture > ( initData, m_Renderer ) );
+        m_InitContainers.m_DisplayedObjVc.push_back( std::make_shared <Texture> ( initData, m_Renderer ) );
     });
 
     std::for_each( m_Tex3DInitVc.begin(), m_Tex3DInitVc.end(), [ this ] ( Text3DInitData initData )
     {
-        m_InitContainers.m_DisplayedObjVc.push_back( std::make_shared < Text3D > ( initData, m_Renderer ) );
+        m_InitContainers.m_DisplayedObjVc.push_back( std::make_shared <Text3D> ( initData, m_Renderer ) );
     });
 
     std::for_each( m_ButtonInitVc.begin(), m_ButtonInitVc.end(), [ this ] ( ButtonInitData initData )
     {
-        auto ptr = std::make_shared < Button > ( initData, m_Renderer );
+        auto ptr = std::make_shared <Button> ( initData, m_Renderer );
         m_InitContainers.m_DisplayedObjVc.push_back( ptr );
         m_InitContainers.m_ButtonVc.push_back( ptr );
     });
 
     std::for_each( m_ButtonNamedInitVc.begin(), m_ButtonNamedInitVc.end(), [ this ] ( ButtonInitData initData )
     {
-        auto ptr = std::make_shared < ButtonNamed > ( initData, m_Renderer );
+        auto ptr = std::make_shared <ButtonNamed> ( initData, m_Renderer );
         m_InitContainers.m_DisplayedObjVc.push_back( ptr );
         m_InitContainers.m_ButtonVc.push_back( ptr );
     });
 
-    m_InitContainers.m_pMap = std::make_shared < Map > ( m_MapInitData, m_Renderer );
+    m_InitContainers.m_pMap = std::make_shared <Map> ( m_MapInitData, m_Renderer );
     m_InitContainers.m_DisplayedObjVc.push_back( m_InitContainers.m_pMap );
 }

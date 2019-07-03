@@ -132,7 +132,7 @@ int MainWindow::getWidth()
     return m_nWidth;
 }
 
-Renderer MainWindow::getRenderer()
+Renderer MainWindow::getRenderer() const
 {
     return m_Renderer;
 }

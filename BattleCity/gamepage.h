@@ -20,15 +20,16 @@ public:
     void renderMapBorder();
     void changeState( CurrentState State );
     void playStartSound();
-    NumOfPlayers getNumOfPlayers();
+    NumOfPlayers getNumOfPlayers() const;
+    uint32_t getHighScore() const;
+    void setCurrentScore( uint32_t nCurrentScore );
 
 private:
     enum class Buttons
     {
-        SET_PAUSE            = 0,
-        SET_CREATE_MAP_STATE = 1,
-        SET_START_PAGE_STATE = 2,
-        BUTTONS_QUANTITY     = 3
+        SET_PAUSE          = 0,
+        SET_PREVIOUS_STATE = 1,
+        BUTTONS_QUANTITY   = 2
     };
 
     class PauseKey
@@ -58,6 +59,7 @@ private:
     pSharedGameEngine m_pGameEngine;
     Renderer m_Renderer;
     CurrentState m_CurrentState;
+    CurrentState m_PreviousState;
     SDL_Rect m_MapBordersRect;
     PauseKey m_PauseKey;
 };

@@ -431,6 +431,11 @@ bool Map::isMapIndexDefault() const
     return !m_nCurrentMapIndex;
 }
 
+uint32_t Map::getStageNumber() const
+{
+    return m_nCurrentMapIndex;
+}
+
 void Map::setBaseGraniteDefense()
 {
     m_MapVc.at( BASE_TOP_POS1   )->setSourceRectNumber( GRANITE_TOP_TILE   );

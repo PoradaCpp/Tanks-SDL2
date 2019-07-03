@@ -32,7 +32,7 @@ public:
     void windowProcessing( State *state );
     int getHeight();
     int getWidth();
-    Renderer getRenderer();
+    Renderer getRenderer() const;
     void attachPage( pSharedPage pPage );
 
 private:

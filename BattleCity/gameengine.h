@@ -12,7 +12,6 @@
 #include "state.h"
 #include "random_uint32_t.h"
 #include "objectsmanagement.h"
-#include "scorescounting.h"
 
 class GamePage;
 
@@ -23,8 +22,7 @@ public:
     friend class ObjectsManagement;
 
     GameEngine( std::vector <AnimationInitData> AnimInitDataVc, std::vector <ImgTextureInitData> LivesAndEnemiesInitDataVc,
-                ObjectsManagementInitData objectsManagementInitData, ImgTextureInitData BackgroundTextureInitData,
-                std::vector <Text3DInitData> Text3DVcInitData, Renderer renderer, pSharedMap pMap );
+                ObjectsManagementInitData objectsManagementInitData, Renderer renderer, pSharedMap pMap );
     ~GameEngine();
 
     void attachGamePage( GamePage *pGamePage );
@@ -32,8 +30,10 @@ public:
     void gameAction();
     void resize();
     void render();
-    void setStartOrPause();
+    void setPause();
+    void resetPause();
     bool isGameOn();
+    bool isGamePaused();
 
 private:
     enum class AnimPurpose
@@ -65,8 +65,8 @@ private:
     static const RelativeRect ENEMY4_BIRTH_POS;
     static const std::array <const RelativeRect*, 4> ENEMY_BIRTH_PLACE_ARR;
 
-    static const int32_t LIVES_X_COLUMNS_DIV = 2;
-    static const int32_t LIVES_Y_ROWS_DIV    = 6;
+    static const int32_t  LIVES_X_COLUMNS_DIV = 2;
+    static const int32_t  LIVES_Y_ROWS_DIV    = 6;
 
     static const uint32_t MAX_NUM_OF_ENEMIES             = 4;
     static const uint32_t NUM_OF_ENEMIES_ON_MAP_1PLAYER  = 4;
@@ -84,7 +84,6 @@ private:
 
     GamePage *m_pGamePage = nullptr;
     pSharedObjectsManagement m_pObjectsManagement;
-    ScoresCounting           m_ScoresCounting;
 
     std::vector <Animation>  m_AnimTextureVc;
     std::vector <Texture>    m_LivesAndEnemiesTextureVc;
@@ -100,6 +99,7 @@ private:
     Renderer     m_Renderer;
     pSharedMap   m_pMap;
     NumOfPlayers m_NumOfPlayers           = NumOfPlayers::ONE_PLAYER;
+    uint32_t     m_nHighScore             = 0;
     uint32_t     m_nGameStateChangingTime = 0;
     uint32_t     m_nNumOfEnemies          = 0;
     uint32_t     m_nNumOfEnemiesOnMap     = NUM_OF_ENEMIES_ON_MAP_1PLAYER;
@@ -116,6 +116,10 @@ private:
     GameState    m_CurrentState           = GameState::GAME_OFF;
     GameState    m_PreviousState          = GameState::GAME_PAUSED;
     Random_uint32_t m_Rand1_4             = Random_uint32_t( 1, 4 );
+
+    void animInit( std::vector <AnimationInitData> AnimInitDataVc, Renderer renderer );
+    void livesAndEnemiesInit( std::vector <ImgTextureInitData> LivesAndEnemiesInitDataVc, Renderer renderer );
+    void soundsInit();
 
     SDL_Rect RelativeToBase( const RelativeRect &relativeRect );
     void calcLiveRectSize();

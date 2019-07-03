@@ -29,6 +29,7 @@ void TankOfEnemy::bonusAnimControl()
         m_nAnimBegin = m_pProperties->m_nAnimTilesBegin;
         m_nAnimEnd = m_pProperties->m_nAnimTilesEnd;
     }
+    m_TankMoveAnim.setAnimFrames( m_nAnimBegin, m_nAnimEnd );
 }
 
 void TankOfEnemy::newRandomDirection()
@@ -44,12 +45,16 @@ void TankOfEnemy::newRandomDirection()
     }
 }
 
+void TankOfEnemy::render()
+{
+    Tank::render();
+    bonusAnimControl();
+}
+
 void TankOfEnemy::changePosition()
 {
     if( m_pProperties->m_nNumberOfLives )
     {
-        bonusAnimControl();
-
         if( !newPositionProcessing() )
         {
             newRandomDirection();

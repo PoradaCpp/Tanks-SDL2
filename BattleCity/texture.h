@@ -56,7 +56,6 @@ public:
     explicit Texture( Renderer renderer );
     Texture( ImgTextureInitData ImgInitData, Renderer renderer );
     Texture( TextTextureInitData TextInitData, Renderer renderer );
-    Texture( const Texture &texture );
 
     ~Texture() override;
 
@@ -91,25 +90,24 @@ public:
 
     operator bool ();
 
-private:
-    pSharedSDLTexture m_pTexture;
+protected:
+    pSharedSDLTexture m_pTexture    = nullptr;
     Renderer m_Renderer;
 
-    int m_nSrcHeight;
-    int m_nSrcWidth;
+    int m_nSrcHeight                = 0;
+    int m_nSrcWidth                 = 0;
 
-    int m_nPageHeight;
-    int m_nPageWidth;
+    int m_nPageHeight               = 0;
+    int m_nPageWidth                = 0;
 
-    RelativeRect m_RelativeDestRect;
-    SDL_Rect m_DestRect;
-    RelativeRect m_RelativeBaseRect;
-    SDL_Rect m_BaseRect;
+    RelativeRect m_RelativeDestRect = { 0, 0, 0, 0 };
+    SDL_Rect m_DestRect             = { 0, 0, 0, 0 };
+    RelativeRect m_RelativeBaseRect = { 0, 0, 0, 0 };
+    SDL_Rect m_BaseRect             = { 0, 0, 0, 0 };
 
-    bool m_fBaseGiven;
-    bool m_fDestChanged;
+    bool m_fBaseGiven               = false;
+    bool m_fDestChanged             = false;
 
-    pSharedSDLTexture makeTextureFromSurface( Surface &surface, Renderer &renderer ) const;
     void calcDestFromRelative( const RelativeRect &RelativeDestRect, SDL_Rect &DestRect );
     void recalcRelativePos();
 };

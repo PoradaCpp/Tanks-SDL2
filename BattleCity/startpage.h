@@ -8,11 +8,12 @@ enum class CurrentState;
 class StartPage: public Page
 {
 public:
-    StartPage( InitContainers &&objContainers, State *pState );
+    StartPage( InitContainers &&objContainers, ScoresText3DData scoresText3DData, State *pState, Renderer renderer );
 
     ~StartPage() override;
 
     void initButtons( State *pState ) override;
+    void resize() override;
     void render() override;
 
 private:
@@ -30,6 +31,8 @@ private:
 
     State *m_pState;
     CurrentState m_CurrentState;
+    Text3D m_MyScoreText3D;
+    Text3D m_HighScoreText3D;
 };
 
 #endif // STARTPAGE_H

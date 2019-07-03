@@ -1,8 +1,14 @@
 debug/main.o
 debug/animation.o
+debug/audiochunk.o
+debug/bonus.o
 debug/gameengine.o
 debug/mainwindow.o
+debug/music.o
+debug/objectsmanagement.o
+debug/playersheart.o
 debug/random_uint32_t.o
+debug/scorescounting.o
 debug/surface.o
 debug/startpage.o
 debug/tank.o
@@ -21,6 +27,7 @@ debug/createmappage.o
 debug/buildmap.o
 debug/mapobject.o
 debug/map.o
+debug/texttexture.o
 debug/texture.o
 debug/buttonnamed.o
 debug/button.o
