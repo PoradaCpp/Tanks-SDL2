@@ -60,6 +60,14 @@ void ScoresCounting::changeSize()
             pText3D->changeSize();
         }
     });
+
+    std::for_each( m_AmountsTextVc.begin(), m_AmountsTextVc.end(), [] ( pSharedText3D &pText3D )
+    {
+        if( pText3D )
+        {
+            pText3D->changeSize();
+        }
+    });
 }
 
 void ScoresCounting::scoresProcessing( const pSharedTank &pTank , const pSharedTankShell &pShell )
